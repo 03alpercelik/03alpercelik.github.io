@@ -172,17 +172,12 @@
             <button class="btn btn-import" id="import-trigger-btn">📤 Yükle</button>
             <input type="file" id="import-file" style="display:none" accept=".json">
             <span id="connection-status" class="connection-status status-online">🟢 Bağlanıyor...</span>
-            <button class="btn btn-reset" id="reset-btn">🗑️ Sıfırla</button>
+            <button class="btn btn-reset" id="reset-btn" title="Boş bir planlama tablosuna dönmek için sıfırla">🗑️ Sıfırla</button>
         </div>
     </div>
     <div class="progress-wrapper">
         <div class="progress-header">
-            <div style="display:flex; gap:10px; align-items:center;">
-                <span id="current-date-info">YKS Kamp Takvimi</span>
-                <div class="setting-container" title="YKS Hedef Tarihi" style="padding: 2px 8px; font-size: 11px;">
-                    YKS Tarihi: <input type="date" id="yks-date-picker">
-                </div>
-            </div>
+            <span id="current-date-info">YKS Kamp Takvimi</span>
             <div style="display:flex; gap:10px; align-items:center;">
                 <span class="stat-badge countdown-badge" id="yks-countdown">YKS: Hesaplanıyor...</span>
                 <span id="progress-text">%0 Tamamlandı</span>
@@ -297,12 +292,11 @@
         const progressText = document.getElementById("progress-text");
         const statsPanel = document.getElementById("stats-panel");
         const targetInput = document.getElementById("daily-target");
-        const yksDatePicker = document.getElementById("yks-date-picker");
         
         let chartInstance = null;
         let currentTarget = 6;
         let currentStartDate = "2024-04-17";
-        let currentYksDate = "2024-06-20"; 
+        let isBlankSchedule = false; // "Sıfırla" sonrası boş tablo için
 
         let cacheTasks = {};
         let cacheNotes = {};
@@ -313,12 +307,18 @@
         const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
         const todayString = `${today.getDate()} ${months[today.getMonth()]} ${days[today.getDay()]}`;
 
+        // YKS Geri Sayım (Sabit: Her Yılın 20 Haziran'ı)
         const updateCountdown = () => {
-            const yksDateObj = new Date(currentYksDate);
-            yksDateObj.setHours(10, 15, 0, 0); 
-            const now = new Date().getTime();
-            const distance = yksDateObj.getTime() - now;
+            const now = new Date();
+            let currentYear = now.getFullYear();
+            let yksDateObj = new Date(currentYear, 5, 20, 10, 15, 0); // Ay indexi 5 = Haziran
             
+            // Eğer bulunduğumuz yılın YKS'si geçtiyse, bir sonraki yıla ayarla
+            if(now.getTime() > yksDateObj.getTime()) {
+                yksDateObj = new Date(currentYear + 1, 5, 20, 10, 15, 0);
+            }
+            
+            const distance = yksDateObj.getTime() - now.getTime();
             if(distance < 0) {
                 document.getElementById('yks-countdown').innerText = "YKS Tamamlandı!";
                 return;
@@ -326,6 +326,7 @@
             const d = Math.floor(distance / (1000 * 60 * 60 * 24));
             document.getElementById('yks-countdown').innerText = `🎯 YKS: ${d} Gün`;
         };
+        updateCountdown();
         setInterval(updateCountdown, 1000 * 60 * 60);
 
         const debounce = (func, delay) => {
@@ -401,7 +402,7 @@
             rows.forEach((row, rowIndex) => {
                 let rowTotalHours = 0;
                 let dateCell = row.querySelector('.date-cell');
-                let isPastOrToday = dateCell && new Date(dateCell.dataset.fulldate) <= todayZero;
+                let rowDate = dateCell ? new Date(dateCell.dataset.fulldate) : null;
                 const rowTasks = row.querySelectorAll(".task-checkbox");
                 const daySubjHours = [0,0,0,0,0];
                 
@@ -425,9 +426,24 @@
                 weekSum += rowTotalHours;
                 if((rowIndex + 1) % 7 === 0 || rowIndex === rows.length - 1) { weeklyData.push(weekSum); weekSum = 0; }
 
-                if(isPastOrToday) {
-                    if(rowTotalHours > 0) { currentStreak++; if(currentStreak > maxStreak) maxStreak = currentStreak; } 
-                    else { currentStreak = 0; }
+                // STREAK MANTIĞI (DÜZELTİLDİ)
+                if (rowDate) {
+                    if (rowDate < todayZero) {
+                        // Tamamlanmış (Geçmiş) Günler
+                        if (rowTotalHours > 0) {
+                            currentStreak++;
+                            if(currentStreak > maxStreak) maxStreak = currentStreak;
+                        } else {
+                            currentStreak = 0; // Geçmişte 0 saat varsa seri kesinlikle bozulur
+                        }
+                    } else if (rowDate.getTime() === todayZero.getTime()) {
+                        // Bugün (Gün henüz bitmedi)
+                        if (rowTotalHours > 0) {
+                            currentStreak++; // Bugün çalıştıysa seriye ekle
+                            if(currentStreak > maxStreak) maxStreak = currentStreak;
+                        }
+                        // Bugün çalışmadıysa (0 ise) SERİYİ BOZMA, yarını veya günün sonunu bekle.
+                    }
                 }
 
                 const hourDisplay = document.getElementById(`hour-${rowIndex + 1}`);
@@ -486,7 +502,11 @@
         const addRowToDOM = (rowIndex) => {
             const tr = document.createElement("tr");
             let html = `<td><div class="date-wrapper"><span class="date-cell" style="font-weight: 600;"></span><button class="btn-complete-day" title="Tüm Günü Tamamla/Temizle">✅</button></div></td>`;
-            const rowData = baseSchedule[rowIndex] || ["Yeni Ders", "Yeni Ders", "Yeni Ders", "Yeni Ders", "Yeni Ders"];
+            
+            // Eğer "Sıfırla" yapıldıysa boş hücre aç, aksi halde Base Schedule'ı yükle
+            const rowData = isBlankSchedule 
+                            ? ["", "", "", "", ""] 
+                            : (baseSchedule[rowIndex] || ["Yeni Ders", "Yeni Ders", "Yeni Ders", "Yeni Ders", "Yeni Ders"]);
 
             for (let i = 1; i < 6; i++) {
                 const taskId = `task-${rowIndex * 5 + (i - 1)}`;
@@ -507,7 +527,7 @@
             const rows = document.querySelectorAll("#table-body tr");
             const totalTasks = rows.length * 5;
 
-            rows.forEach(row => {
+            rows.forEach((row, rowIndex) => {
                 row.querySelectorAll(".task-checkbox").forEach(box => {
                     const textSpan = box.nextElementSibling;
                     const isChecked = cacheTasks[box.id] === true;
@@ -516,9 +536,15 @@
                     else { textSpan.classList.remove("completed-text"); }
                 });
 
-                row.querySelectorAll('.editable-text').forEach(el => {
+                row.querySelectorAll('.editable-text').forEach((el, i) => {
                     const id = el.getAttribute('data-edit-id');
-                    if (cacheCustomTexts[id] && document.activeElement !== el) el.innerText = cacheCustomTexts[id];
+                    if (cacheCustomTexts[id] !== undefined && document.activeElement !== el) {
+                        el.innerText = cacheCustomTexts[id];
+                    } else if (!cacheCustomTexts[id] && document.activeElement !== el && id.startsWith('task-text')) {
+                         // Eğer custom text yoksa, isBlank durumuna göre text'i ayarla
+                         const expectedText = isBlankSchedule ? "" : (baseSchedule[rowIndex] ? baseSchedule[rowIndex][i] : "Yeni Ders");
+                         if(el.innerText !== expectedText) el.innerText = expectedText;
+                    }
                 });
 
                 row.querySelectorAll('.note-input').forEach(input => {
@@ -539,18 +565,18 @@
             else { cs.innerHTML = "🔴 Çevrimdışı"; cs.className = "connection-status status-offline"; }
         });
 
-        onValue(ref(database, 'kamp/settings/startDate'), (snapshot) => { currentStartDate = snapshot.val() || "2024-04-17"; document.getElementById("start-date-picker").value = currentStartDate; updateDatesInTable(); });
-        onValue(ref(database, 'kamp/settings/yksDate'), (snapshot) => { currentYksDate = snapshot.val() || "2024-06-20"; yksDatePicker.value = currentYksDate; updateCountdown(); });
-        onValue(ref(database, 'kamp/settings/targetHours'), (snapshot) => { currentTarget = snapshot.val() || 6; targetInput.value = currentTarget; updateStats(); });
+        // Settings'i Topluca Çekiyoruz (Yarış durumunu - race condition - önlemek için)
+        onValue(settingsRef, (snapshot) => {
+            const settings = snapshot.val() || {};
+            currentStartDate = settings.startDate || "2024-04-17";
+            currentTarget = settings.targetHours || 6;
+            isBlankSchedule = settings.isBlank || false;
+            const targetCount = settings.rowCount || 28;
 
-        document.getElementById("start-date-picker").addEventListener("change", (e) => { set(ref(database, 'kamp/settings/startDate'), e.target.value).catch(console.error); });
-        yksDatePicker.addEventListener("change", (e) => { set(ref(database, 'kamp/settings/yksDate'), e.target.value).catch(console.error); });
-        targetInput.addEventListener("change", (e) => { set(ref(database, 'kamp/settings/targetHours'), Number(e.target.value)).catch(console.error); });
+            document.getElementById("start-date-picker").value = currentStartDate;
+            targetInput.value = currentTarget;
 
-        onValue(ref(database, 'kamp/settings/rowCount'), (snapshot) => {
-            const targetCount = snapshot.val() || 28; 
             const currentCount = tbody.children.length;
-            
             if (targetCount > currentCount) { 
                 for (let i = currentCount; i < targetCount; i++) addRowToDOM(i); 
             } else if (targetCount < currentCount) { 
@@ -569,6 +595,9 @@
             updateDatesInTable(); applyDataToUI();
         });
 
+        document.getElementById("start-date-picker").addEventListener("change", (e) => { set(ref(database, 'kamp/settings/startDate'), e.target.value).catch(console.error); });
+        targetInput.addEventListener("change", (e) => { set(ref(database, 'kamp/settings/targetHours'), Number(e.target.value)).catch(console.error); });
+
         document.getElementById("add-row-btn").addEventListener("click", () => { set(ref(database, 'kamp/settings/rowCount'), tbody.children.length + 1).catch(console.error); });
         document.getElementById("del-row-btn").addEventListener("click", () => {
             if (tbody.children.length <= 28) return alert("Asgari 28 günlük kamp planının altına düşülemez!");
@@ -581,7 +610,7 @@
             cacheCustomTexts = snapshot.val() || {}; 
             document.querySelectorAll('thead .editable-text').forEach(el => {
                 const id = el.getAttribute('data-edit-id');
-                if (cacheCustomTexts[id] && document.activeElement !== el) el.innerText = cacheCustomTexts[id];
+                if (cacheCustomTexts[id] !== undefined && document.activeElement !== el) el.innerText = cacheCustomTexts[id];
             });
             applyDataToUI(); 
         });
@@ -666,9 +695,9 @@
             localStorage.setItem("theme", theme);
         });
 
-        // Sıfırlama (Reset) Butonu
+        // Sıfırlama (Reset) Butonu - Boş Tablo Oluşturur
         document.getElementById("reset-btn").addEventListener("click", () => {
-            if (confirm("🚨 DİKKAT! Tüm ilerleme, notlar ve isimler SİLİNECEK.\nYedek aldın mı?\n\nDevam etmek istiyor musun?")) {
+            if (confirm("🚨 DİKKAT! Tüm ilerleme, notlar ve kamp programı SİLİNECEK.\nSadece boş bir planlama tablosu kalacak.\n\nDevam etmek istiyor musun?")) {
                 const btn = document.getElementById("reset-btn");
                 btn.innerHTML = "⏳ Siliniyor..."; 
                 btn.disabled = true;
@@ -677,9 +706,10 @@
                     remove(ref(database, 'kamp/tasks')), 
                     remove(ref(database, 'kamp/notes')), 
                     remove(ref(database, 'kamp/customTexts')), 
-                    remove(ref(database, 'kamp/settings'))
+                    set(ref(database, 'kamp/settings/isBlank'), true), // Boş tablo modunu aktif et
+                    set(ref(database, 'kamp/settings/rowCount'), 28) // Satır sayısını varsayılana çek
                 ]).then(() => {
-                    alert("Tüm veriler başarıyla sıfırlandı!");
+                    alert("Tüm veriler temizlendi. Karşında planlamanı bekleyen boş bir tablo var!");
                     window.location.reload(); 
                 }).catch(err => {
                     console.error("Sıfırlama hatası:", err);
@@ -719,7 +749,7 @@
         });
 
         document.getElementById("export-btn").addEventListener("click", () => {
-            const backupData = { tasks: cacheTasks, notes: cacheNotes, customTexts: cacheCustomTexts, settings: { startDate: currentStartDate, rowCount: tbody.children.length, targetHours: currentTarget, yksDate: currentYksDate } };
+            const backupData = { tasks: cacheTasks, notes: cacheNotes, customTexts: cacheCustomTexts, settings: { startDate: currentStartDate, rowCount: tbody.children.length, targetHours: currentTarget, isBlank: isBlankSchedule } };
             const dataStr = JSON.stringify(backupData, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
@@ -727,16 +757,47 @@
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         });
 
-        // Bildirim Sistemi
+        // Gerçek Zamanlı Bildirim Sistemi (Arka Plan Kontrolü)
         document.getElementById("notify-btn").addEventListener("click", () => {
             if (!("Notification" in window)) { alert("Tarayıcın bildirimleri desteklemiyor."); return; }
-            if (Notification.permission === "granted") { new Notification("Kamp Takip Pro", { body: "Bildirimler zaten aktif! Çalışmaya devam!" }); } 
-            else if (Notification.permission !== "denied") {
+            if (Notification.permission === "granted") { 
+                new Notification("Kamp Takip Pro", { body: "Bildirimler zaten aktif! Her akşam 20:00'da hatırlatıcı gönderilecek." }); 
+            } else if (Notification.permission !== "denied") {
                 Notification.requestPermission().then(permission => {
-                    if (permission === "granted") new Notification("Harika!", { body: "Artık sana günlük hatırlatmalar yapabileceğim." });
+                    if (permission === "granted") new Notification("Harika!", { body: "Artık sekme açık kaldıkça her akşam saat 20:00'da hedefini hatırlatacağım." });
                 });
             }
         });
+
+        // Sekme arka planda kaldığı sürece her 1 dakikada bir kontrol eder
+        setInterval(() => {
+            const now = new Date();
+            // Sadece Saat tam 20:00 olduğunda bildirim atar
+            if (now.getHours() === 20 && now.getMinutes() === 0) {
+                if (Notification.permission === "granted") {
+                    const todayZero = new Date(); todayZero.setHours(0,0,0,0);
+                    let todayTotalHours = 0;
+                    
+                    document.querySelectorAll("#table-body tr").forEach((row, index) => {
+                        let dateCell = row.querySelector('.date-cell');
+                        if(dateCell && new Date(dateCell.dataset.fulldate).getTime() === todayZero.getTime()) {
+                            const hourText = document.getElementById(`hour-${index+1}`).innerText;
+                            todayTotalHours = parseFloat(hourText) || 0;
+                        }
+                    });
+
+                    if(todayTotalHours < currentTarget) {
+                        new Notification("Kamp Takip Pro Hatırlatıcı", { 
+                            body: `Günün bitmesine az kaldı! Bugün ${todayTotalHours} saat çalıştın. Hedefin ise ${currentTarget} saat. Haydi masaya!` 
+                        });
+                    } else {
+                        new Notification("Kamp Takip Pro Tebrikler!", { 
+                            body: `Bugünkü ${currentTarget} saatlik hedefine ulaştın. Harika bir iş çıkardın!` 
+                        });
+                    }
+                }
+            }
+        }, 60000); // 60 saniyede bir saati kontrol et
     });
 </script>
 
