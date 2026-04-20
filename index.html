@@ -66,7 +66,8 @@
 
         .setting-container { display: flex; align-items: center; gap: 8px; background: var(--card-bg); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--table-border); font-size: 13px; font-weight: 600; }
         .setting-container input { border: none; background: transparent; color: var(--text-color); font-family: inherit; font-weight: bold; outline: none; cursor: pointer; }
-        
+        .setting-container input[disabled] { opacity: 0.9; cursor: not-allowed; }
+
         .connection-status { font-size: 11px; font-weight: bold; padding: 6px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
         .status-online { background: rgba(0, 184, 148, 0.15); color: var(--accent); }
         .status-offline { background: rgba(255, 118, 117, 0.15); color: var(--danger-color); }
@@ -267,8 +268,27 @@
         ["Trigonometri (2. Gün)", "12 Prob. + TYT Mat. Türkçe", "İş, Güç ve Enerji (2. Gün)", "TYT Kimya (5. Gün)", "Solunum Sistemi (2. Gün)"],
         ["Trigonometri (3. Gün)", "Mat. Deneme + TYT Sosyal", "Bir Boyutta Sabit İvmeli Hareket (1. Gün)", "Gazlar (2. Gün)", "Boşaltım Sistemi (1. Gün)"],
         ["Trigonometri (4. Gün)", "12 Prob. + TYT Mat. Türkçe", "Bir Boyutta Sabit İvmeli Hareket (2. Gün)", "Gazlar (3. Gün)", "Boşaltım Sistemi (2. Gün)"],
-        ["Trigonometri (5. Gün)", "Mat. Deneme + TYT Sosyal", "Bir Boyutta Sabit İvmeli Hareket (3. Gün)", "Çözeltiler (1. Gün)", "Üreme ve Gelişim (1. Gün)"]
-        // Veriyi kısaltmak için geri kalan günleri gizli tuttum. 28 günlük temel aynı.
+        ["Trigonometri (5. Gün)", "Mat. Deneme + TYT Sosyal", "Bir Boyutta Sabit İvmeli Hareket (3. Gün)", "Çözeltiler (1. Gün)", "Üreme ve Gelişim (1. Gün)"],
+        ["Trigonometri (6. Gün)", "12 Prob. + TYT Mat. Türkçe", "İtme ve Momentum (1. Gün)", "Çözeltiler (2. Gün)", "Üreme ve Gelişim (2. Gün)"],
+        ["Trigonometri (7. Gün)", "Mat. Deneme + TYT Sosyal", "İtme ve Momentum (2. Gün)", "Çözeltiler (3. Gün)", "Komünite ve Popülasyon (1. Gün)"],
+        ["Trigonometri (8. Gün)", "12 Prob. + TYT Mat. Türkçe", "İtme ve Momentum (3. Gün)", "Enerji (Entalpi) (1. Gün)", "Komünite ve Popülasyon (2. Gün)"],
+        ["Trigonometri (9. Gün)", "Mat. Deneme + TYT Sosyal", "Çembersel Hareket (1. Gün)", "Enerji (Entalpi) (2. Gün)", "Komünite ve Popülasyon (3. Gün)"],
+        ["Trigonometri (10. Gün)", "12 Prob. + TYT Mat. Türkçe", "Çembersel Hareket (2. Gün)", "Kimyasal Hız (1. Gün)", "Genden Proteine (1. Gün)"],
+        ["2. Der. Denk. (1. Gün)", "Mat. Deneme + TYT Sosyal", "Çembersel Hareket (3. Gün)", "Kimyasal Hız (2. Gün)", "Genden Proteine (2. Gün)"],
+        ["2. Der. Denk. (2. Gün)", "12 Prob. + TYT Mat. Türkçe", "Kütle Çekimi ve Kepler", "Kimyasal Denge (1. Gün)", "Genden Proteine (3. Gün)"],
+        ["2. Der. Denk. (3. Gün)", "Mat. Deneme + TYT Sosyal", "Dalga Mekaniği (1. Gün)", "Kimyasal Denge (2. Gün)", "Genden Proteine (4. Gün)"],
+        ["2. Der. Denk. (4. Gün)", "12 Prob. + TYT Mat. Türkçe", "Dalga Mekaniği (2. Gün)", "Kimyasal Denge (3. Gün)", "Canlılarda Enerji Dön. (1. Gün)"],
+        ["Parabol (1. Gün)", "Mat. Deneme + TYT Sosyal", "Dalga Mekaniği (3. Gün)", "Asit-Baz Dengesi (1. Gün)", "Canlılarda Enerji Dön. (2. Gün)"],
+        ["Parabol (2. Gün)", "12 Prob. + TYT Mat. Türkçe", "Atom Fiziği/Radyoakt. (1. Gün)", "Asit-Baz Dengesi (2. Gün)", "Canlılarda Enerji Dön. (3. Gün)"],
+        ["Logaritma (1. Gün)", "Mat. Deneme + TYT Sosyal", "Atom Fiziği/Radyoakt. (2. Gün)", "Asit-Baz Dengesi (3. Gün)", "Canlılarda Enerji Dön. (4. Gün)"],
+        ["Logaritma (2. Gün)", "12 Prob. + TYT Mat. Türkçe", "Atom Fiziği/Radyoakt. (3. Gün)", "Çözünürlük Dengesi (1. Gün)", "Canlılarda Enerji Dön. (5. Gün)"],
+        ["Diziler (1. Gün)", "Mat. Deneme + TYT Sosyal", "Modern Fizik (1. Gün)", "Çözünürlük Dengesi (2. Gün)", "Bitki Biyolojisi (1. Gün)"],
+        ["Diziler (2. Gün)", "12 Prob. + TYT Mat. Türkçe", "Modern Fizik (2. Gün)", "Kimya ve Elektrik (1. Gün)", "Bitki Biyolojisi (2. Gün)"],
+        ["PKOB (1. Gün)", "Mat. Deneme + TYT Sosyal", "Modern Fizik (3. Gün)", "Kimya ve Elektrik (2. Gün)", "Bitki Biyolojisi (3. Gün)"],
+        ["PKOB (2. Gün)", "12 Prob. + TYT Mat. Türkçe", "Teknolojideki Uyg. (1. Gün)", "Kimya ve Elektrik (3. Gün)", "Bitki Biyolojisi (4. Gün)"],
+        ["PKOB (3. Gün)", "Mat. Deneme + TYT Sosyal", "Teknolojideki Uyg. (2. Gün)", "Genel Tekrar", "Bitki Biyolojisi (5. Gün)"],
+        ["PKOB (4. Gün)", "12 Prob. + TYT Mat. Türkçe", "Fizik Genel Tekrar", "Genel Tekrar", "Biyoloji Genel Tekrar (1. Gün)"],
+        ["PKOB (5. Gün)", "Mat. Deneme + AYT Genel Tekrar", "Fizik Mini Branş Denemesi", "Genel Tekrar", "Biyoloji Genel Tekrar (2. Gün)"]
     ];
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -284,7 +304,6 @@
         let currentStartDate = "2024-04-17";
         let currentYksDate = "2024-06-20"; 
 
-        // Açıkça Cache Değişkenleri
         let cacheTasks = {};
         let cacheNotes = {};
         let cacheCustomTexts = {};
@@ -294,7 +313,6 @@
         const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
         const todayString = `${today.getDate()} ${months[today.getMonth()]} ${days[today.getDay()]}`;
 
-        // YKS Geri Sayım (Güncellendi)
         const updateCountdown = () => {
             const yksDateObj = new Date(currentYksDate);
             yksDateObj.setHours(10, 15, 0, 0); 
@@ -317,7 +335,6 @@
 
         const getHoursFromText = (text) => {
             if (!text) return 0;
-            // Toleranslı Regex: Hem ":" hem de "." ile saat girişini destekler
             const timeMatch = text.match(/(\d{1,2})[:\.](\d{2})\s*-\s*(\d{1,2})[:\.](\d{2})/);
             if (timeMatch) {
                 const startMins = parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2]);
@@ -367,9 +384,6 @@
                 weeklyGrid.innerHTML += `<div class="week-item"><span class="w-title">${i+1}. Hafta</span><span class="w-val">${week.toFixed(1)} Saat</span></div>`;
             });
         };
-
-        // ... Diğer UI Update Fonksiyonları (updateStats, updateDatesInTable, addRowToDOM, applyDataToUI aynı kalıyor) ...
-        // (Not: Kod kirliliği olmaması için UI update fonksiyonlarını kısaltarak yazdım, kendi kodundaki versiyonu tamamen geçerlidir.)
 
         const updateStats = () => {
             const rows = document.querySelectorAll("#table-body tr");
@@ -518,7 +532,7 @@
             updateStats();
         };
 
-        // Firebase Events
+        // Firebase Listeners
         onValue(connectedRef, (snap) => {
             const cs = document.getElementById("connection-status");
             if (snap.val() === true) { cs.innerHTML = "🟢 Bağlı"; cs.className = "connection-status status-online"; } 
@@ -533,7 +547,6 @@
         yksDatePicker.addEventListener("change", (e) => { set(ref(database, 'kamp/settings/yksDate'), e.target.value).catch(console.error); });
         targetInput.addEventListener("change", (e) => { set(ref(database, 'kamp/settings/targetHours'), Number(e.target.value)).catch(console.error); });
 
-        // ROW YÖNETİMİ & GARBAGE COLLECTION
         onValue(ref(database, 'kamp/settings/rowCount'), (snapshot) => {
             const targetCount = snapshot.val() || 28; 
             const currentCount = tbody.children.length;
@@ -541,7 +554,6 @@
             if (targetCount > currentCount) { 
                 for (let i = currentCount; i < targetCount; i++) addRowToDOM(i); 
             } else if (targetCount < currentCount) { 
-                // SATIR SİLİNDİĞİNDE DB'Yİ TEMİZLE
                 const tasksUpdate = {}; const notesUpdate = {}; const customUpdate = {};
                 for (let i = targetCount; i < currentCount; i++) {
                     for (let j = 0; j < 5; j++) tasksUpdate[`task-${i * 5 + j}`] = null;
@@ -574,12 +586,11 @@
             applyDataToUI(); 
         });
 
-        // Event Delegation
+        // Toggle ve Event Listener'lar
         tbody.addEventListener("change", (e) => {
             if (e.target.classList.contains("task-checkbox")) { set(ref(database, 'kamp/tasks/' + e.target.id), e.target.checked).catch(console.error); updateStats(); }
         });
 
-        // GÜVENLİ TOGGLE - CLOSEST TR İLE
         tbody.addEventListener("click", (e) => {
             if (e.target.classList.contains("btn-complete-day")) {
                 const tr = e.target.closest('tr');
@@ -590,7 +601,7 @@
                 
                 rowTasks.forEach(box => { 
                     updates[box.id] = newState; 
-                    box.checked = newState; // Visual 
+                    box.checked = newState; 
                 });
                 
                 update(tasksRef, updates).catch(err => {
@@ -612,7 +623,74 @@
             }
         });
 
-        // İçe Aktar (Güvenli Import)
+        // Arama (Search) Fonksiyonu
+        document.getElementById('note-search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll("#table-body tr");
+            rows.forEach((row) => {
+                const noteInput = row.querySelector('.note-input');
+                if(term === "" || (noteInput && noteInput.value.toLowerCase().includes(term))) { 
+                    row.style.display = ""; 
+                } else { 
+                    row.style.display = "none"; 
+                }
+            });
+        });
+
+        // Düzenleme (Edit) Modu
+        let isEditMode = false;
+        const editBtn = document.getElementById("edit-btn");
+        editBtn.addEventListener("click", () => {
+            isEditMode = !isEditMode;
+            const editables = document.querySelectorAll('.editable-text');
+            if (isEditMode) {
+                document.body.classList.add("edit-mode");
+                editBtn.innerHTML = "💾 Kaydet"; 
+                editBtn.classList.add("active");
+                editables.forEach(el => el.setAttribute("contenteditable", "true"));
+            } else {
+                document.body.classList.remove("edit-mode");
+                editBtn.innerHTML = "✏️ Düzenle"; 
+                editBtn.classList.remove("active");
+                editables.forEach(el => el.removeAttribute("contenteditable"));
+                editables.forEach(el => { el.innerText = el.innerText.trim(); }); 
+            }
+        });
+
+        // Tema (Dark/Light Mode)
+        const currentTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", currentTheme);
+        document.getElementById("theme-toggle").addEventListener("click", () => {
+            const theme = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", theme);
+            localStorage.setItem("theme", theme);
+        });
+
+        // Sıfırlama (Reset) Butonu
+        document.getElementById("reset-btn").addEventListener("click", () => {
+            if (confirm("🚨 DİKKAT! Tüm ilerleme, notlar ve isimler SİLİNECEK.\nYedek aldın mı?\n\nDevam etmek istiyor musun?")) {
+                const btn = document.getElementById("reset-btn");
+                btn.innerHTML = "⏳ Siliniyor..."; 
+                btn.disabled = true;
+                
+                Promise.all([
+                    remove(ref(database, 'kamp/tasks')), 
+                    remove(ref(database, 'kamp/notes')), 
+                    remove(ref(database, 'kamp/customTexts')), 
+                    remove(ref(database, 'kamp/settings'))
+                ]).then(() => {
+                    alert("Tüm veriler başarıyla sıfırlandı!");
+                    window.location.reload(); 
+                }).catch(err => {
+                    console.error("Sıfırlama hatası:", err);
+                    alert("Veriler sıfırlanırken bir hata oluştu.");
+                    btn.innerHTML = "🗑️ Sıfırla"; 
+                    btn.disabled = false;
+                });
+            }
+        });
+
+        // İçe Aktar / Dışa Aktar Kodları
         const importBtn = document.getElementById('import-trigger-btn');
         const fileInput = document.getElementById('import-file');
         importBtn.addEventListener('click', () => fileInput.click());
@@ -623,11 +701,9 @@
             reader.onload = (ev) => {
                 try {
                     const data = JSON.parse(ev.target.result);
-                    // Basit Doğrulama
                     if (!data || typeof data !== 'object' || (!data.tasks && !data.notes && !data.customTexts && !data.settings)) {
                         return alert('Geçersiz yedek dosyası (Beklenen kamp verileri eksik).');
                     }
-
                     if(confirm("Yedek yükleniyor. Mevcut online verilerin tamamen SİLİNİP bu dosyadakilerle DEĞİŞTİRİLECEK.\n\nEmin misin?")) {
                         set(ref(database, 'kamp/'), data).then(() => { 
                             alert("Yedek başarıyla yüklendi!"); 
@@ -637,15 +713,30 @@
                             alert("Yedek yüklenirken bir veritabanı hatası oluştu: " + err.message);
                         });
                     }
-                } catch(err) { 
-                    alert("Geçersiz dosya formatı veya bozuk JSON!"); 
-                }
+                } catch(err) { alert("Geçersiz dosya formatı veya bozuk JSON!"); }
             };
             reader.readAsText(file);
         });
 
-        // Diğer Fonksiyonlar (Arama, Tema, Düzenleme) orijinal halinde eklendi...
-        // Kod kirliliği olmaması adına burayı geçiyorum, kendi kodundaki yapı aynen geçerli.
+        document.getElementById("export-btn").addEventListener("click", () => {
+            const backupData = { tasks: cacheTasks, notes: cacheNotes, customTexts: cacheCustomTexts, settings: { startDate: currentStartDate, rowCount: tbody.children.length, targetHours: currentTarget, yksDate: currentYksDate } };
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a"); a.href = url; a.download = `YKS_Kamp_Yedek_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        });
+
+        // Bildirim Sistemi
+        document.getElementById("notify-btn").addEventListener("click", () => {
+            if (!("Notification" in window)) { alert("Tarayıcın bildirimleri desteklemiyor."); return; }
+            if (Notification.permission === "granted") { new Notification("Kamp Takip Pro", { body: "Bildirimler zaten aktif! Çalışmaya devam!" }); } 
+            else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") new Notification("Harika!", { body: "Artık sana günlük hatırlatmalar yapabileceğim." });
+                });
+            }
+        });
     });
 </script>
 
