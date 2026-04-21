@@ -227,7 +227,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // PWA Service Worker Registration (Tek dosyada tutmak için Blob ile yapıyoruz)
+    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
         const swCode = `
             self.addEventListener('install', (e) => { self.skipWaiting(); });
@@ -254,7 +254,7 @@
     const database = getDatabase(app);
     
     const SHARED_PATH = "yks_kamp_pro_shared/kamp/";
-    const DEFAULT_START_DATE = "2026-04-21"; // Tekilleştirilmiş başlangıç tarihi varsayılanı
+    const DEFAULT_START_DATE = "2026-04-21"; 
     
     let tasksRef, notesRef, customTextRef, settingsRef, userRootRef;
     const connectedRef = ref(database, '.info/connected');
@@ -332,7 +332,6 @@
             return 0; 
         };
 
-        // Chart Update Logic (İşlemi ayrı bir metoda çıkardık)
         const renderDashboardLogic = (subjNames, subjTotalHoursArr) => {
             const ctx = document.getElementById('trendChart').getContext('2d');
             const colors = ['#6c5ce7', '#00cec9', '#fdcb6e', '#e17055', '#00b894'];
@@ -357,7 +356,7 @@
                     responsive: true, 
                     maintainAspectRatio: false,
                     plugins: { legend: { position: 'right' } },
-                    animation: { duration: 0 } // Animasyon UI takılmasını engellemek için kapalı
+                    animation: { duration: 0 } 
                 }
             });
 
@@ -368,7 +367,6 @@
             });
         };
 
-        // Chart render işlemini Performans için Debounce'a alıyoruz
         const debouncedRenderDashboard = debounce(renderDashboardLogic, 400);
 
         const toDateStr = (d) => {
@@ -424,22 +422,35 @@
                 }
             });
 
+            // ============ STREAK (KESİNTİSİZ SERİ) HESAPLAMA ============
             let currentStreak = 0;
-            let checkDate = new Date(); 
-            let checkDateStr = toDateStr(checkDate);
+            const streakCheckDate = new Date();
+            streakCheckDate.setHours(0, 0, 0, 0);
 
-            if (dailyHoursMap[checkDateStr] > 0) { currentStreak++; } 
+            const todayKey = toDateStr(streakCheckDate);
+            const todayHours = dailyHoursMap[todayKey] || 0;
 
-            checkDate.setDate(checkDate.getDate() - 1);
-            while(true) {
-                let pastDateStr = toDateStr(checkDate);
-                if (dailyHoursMap[pastDateStr] > 0) {
-                    currentStreak++;
-                    checkDate.setDate(checkDate.getDate() - 1);
-                } else {
-                    break;
-                }
+            if (todayHours >= currentTarget) {
+                currentStreak++;
             }
+
+            streakCheckDate.setDate(streakCheckDate.getDate() - 1);
+            const maxIterations = Math.max(rows.length, 365);
+            let iter = 0;
+
+            while (iter < maxIterations) {
+                const pastKey = toDateStr(streakCheckDate);
+                const pastHours = dailyHoursMap[pastKey] || 0;
+
+                if (pastHours >= currentTarget) {
+                    currentStreak++;
+                    streakCheckDate.setDate(streakCheckDate.getDate() - 1);
+                } else {
+                    break; 
+                }
+                iter++;
+            }
+            // ============ STREAK HESAPLAMA SONU ============
 
             const subjNames = [];
             for(let i=1; i<=5; i++) {
@@ -454,7 +465,6 @@
             }
             statsPanel.innerHTML = statsHtml;
             
-            // Performans için Chart Renderını Debounce ile çağırıyoruz
             debouncedRenderDashboard(subjNames, subjTotalHoursArr);
         };
 
@@ -787,15 +797,12 @@
             }
         });
 
-        // Optimize Edilmiş Bildirim Mantığı (10 Dakikada bir kontrol eder, günde bir kez atar)
         setInterval(() => {
             const now = new Date();
-            // Saat 20:00 veya sonraysa
             if (now.getHours() >= 20) {
                 const todayStr = toDateStr(now);
                 const lastNotified = localStorage.getItem('lastNotifiedDate');
                 
-                // Eğer bugün henüz bildirim atmadıysak
                 if (lastNotified !== todayStr && Notification.permission === "granted") {
                     const todayZero = new Date(); todayZero.setHours(0,0,0,0);
                     let todayTotalHours = 0;
@@ -814,11 +821,10 @@
                         new Notification("Kamp Takip Pro Tebrikler!", { body: `Bugünkü ${currentTarget} saatlik hedefine ulaştın. Harika bir iş çıkardın!` });
                     }
                     
-                    // Bugün bildirim attığımızı kaydediyoruz
                     localStorage.setItem('lastNotifiedDate', todayStr);
                 }
             }
-        }, 600000); // 10 Dakika (600,000 ms)
+        }, 600000); 
     });
 </script>
 
