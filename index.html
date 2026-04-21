@@ -2,51 +2,37 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light dark">
-    <title>YKS Kamp Takip Pro - Cihazlar Arası Senkron</title>
+    
+    <meta name="theme-color" content="#6c5ce7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>YKS Kamp Takip Pro</title>
+    
+    <link rel="manifest" href='data:application/manifest+json,{"name":"YKS Kamp Takip Pro","short_name":"Kamp Pro","start_url":".","display":"standalone","background_color":"#f8f9fa","theme_color":"#6c5ce7","icons":[{"src":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIGZpbGw9IiM2YzVjZTciLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5LPC90ZXh0Pjwvc3ZnPg==","sizes":"192x192","type":"image/svg+xml"},{"src":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IiM2YzVjZTciLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SzwvdGV4dD48L3N2Zz4=","sizes":"512x512","type":"image/svg+xml"}]}'>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #2d3436;
-            --secondary-text: #636e72;
-            --table-border: #dfe6e9;
-            --header-bg: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            --row-even: #f1f2f6;
-            --row-odd: #ffffff;
-            --highlight: #fdcb6e;
-            --accent: #00b894;
-            --edit-color: #0984e3;
-            --danger-color: #ff7675;
-            --stat-bg: #e0f2f1;
-            --past-day-bg: #e2e8f0;
-            --dropdown-hover: #f1f2f6;
+            --bg-color: #f8f9fa; --card-bg: #ffffff; --text-color: #2d3436; --secondary-text: #636e72;
+            --table-border: #dfe6e9; --header-bg: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            --row-even: #f1f2f6; --row-odd: #ffffff; --highlight: #fdcb6e; --accent: #00b894;
+            --edit-color: #0984e3; --danger-color: #ff7675; --stat-bg: #e0f2f1;
+            --past-day-bg: #e2e8f0; --dropdown-hover: #f1f2f6;
         }
 
         [data-theme="dark"] {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --secondary-text: #94a3b8;
-            --table-border: #334155;
-            --header-bg: linear-gradient(135deg, #4f46e5, #818cf8);
-            --row-even: #1e293b;
-            --row-odd: #0f172a;
-            --highlight: #eab308;
-            --accent: #10b981;
-            --edit-color: #3b82f6;
-            --danger-color: #ef4444;
-            --stat-bg: #064e3b;
-            --past-day-bg: #162032;
-            --dropdown-hover: #334155;
+            --bg-color: #0f172a; --card-bg: #1e293b; --text-color: #f8fafc; --secondary-text: #94a3b8;
+            --table-border: #334155; --header-bg: linear-gradient(135deg, #4f46e5, #818cf8);
+            --row-even: #1e293b; --row-odd: #0f172a; --highlight: #eab308; --accent: #10b981;
+            --edit-color: #3b82f6; --danger-color: #ef4444; --stat-bg: #064e3b;
+            --past-day-bg: #162032; --dropdown-hover: #334155;
         }
 
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); transition: background 0.3s ease, color 0.3s ease; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); transition: background 0.3s ease, color 0.3s ease; -webkit-tap-highlight-color: transparent; }
 
         .sticky-header { position: sticky; top: 0; z-index: 100; background-color: var(--bg-color); padding: 15px 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); backdrop-filter: blur(8px); border-bottom: 1px solid var(--table-border); }
 
@@ -60,19 +46,8 @@
         .btn-edit.active { background: var(--accent); animation: pulse 2s infinite; }
         
         .dropdown { position: relative; display: inline-block; }
-        .dropdown-content {
-            display: none; position: absolute; right: 0; top: 110%;
-            background-color: var(--card-bg); min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            border-radius: 8px; z-index: 1000;
-            border: 1px solid var(--table-border); overflow: hidden;
-        }
-        .dropdown-content .drop-item {
-            width: 100%; text-align: left; border-radius: 0; border: none;
-            padding: 12px 16px; background: transparent; color: var(--text-color);
-            font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s;
-            display: flex; align-items: center; gap: 8px;
-        }
+        .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: var(--card-bg); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1000; border: 1px solid var(--table-border); overflow: hidden; }
+        .dropdown-content .drop-item { width: 100%; text-align: left; border-radius: 0; border: none; padding: 12px 16px; background: transparent; color: var(--text-color); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 8px; }
         .dropdown-content .drop-item:hover { background-color: var(--dropdown-hover); }
         .dropdown-content .danger-item { color: var(--danger-color); }
         .show-dropdown { display: block; }
@@ -83,8 +58,7 @@
 
         .setting-container { display: flex; align-items: center; gap: 8px; background: var(--card-bg); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--table-border); font-size: 13px; font-weight: 600; }
         .setting-container input { border: none; background: transparent; color: var(--text-color); font-family: inherit; font-weight: bold; outline: none; cursor: pointer; }
-        .setting-container input[disabled] { opacity: 0.9; cursor: not-allowed; }
-
+        
         .connection-status { font-size: 11px; font-weight: bold; padding: 6px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
         .status-online { background: rgba(0, 184, 148, 0.15); color: var(--accent); }
         .status-offline { background: rgba(255, 118, 117, 0.15); color: var(--danger-color); }
@@ -126,7 +100,6 @@
         
         .note-input { width: 100%; min-width: 160px; padding: 8px; border: 1px solid var(--table-border); border-radius: 6px; background: var(--card-bg); color: var(--text-color); font-size: 12px; font-family: inherit; resize: vertical; min-height: 40px; box-sizing: border-box; transition: border-color 0.2s; }
         .note-input:focus { outline: none; border-color: var(--accent); }
-        
         .search-input { min-width: auto; height: 35px; width: 200px; border-radius: 20px; padding: 0 15px; }
 
         .today-highlight, .today-highlight td { background-color: var(--highlight) !important; color: #000000 !important; font-weight: 700 !important; }
@@ -208,8 +181,7 @@
         <div class="progress-bar-container">
             <div class="progress-bar-fill" id="progress-fill"></div>
         </div>
-        <div class="stats-container" id="stats-panel">
-            </div>
+        <div class="stats-container" id="stats-panel"></div>
     </div>
 </div>
 
@@ -228,8 +200,7 @@
                     <th>Toplam Saat</th>
                 </tr>
             </thead>
-            <tbody id="table-body">
-                </tbody>
+            <tbody id="table-body"></tbody>
         </table>
     </div>
     
@@ -240,15 +211,14 @@
 
     <div class="dashboard">
         <div class="dash-card">
-            <h3>📈 Ders Bazlı İlerleme Trendi</h3>
+            <h3>📊 Ders Dağılımı (Saat)</h3>
             <div class="chart-container">
                 <canvas id="trendChart"></canvas>
             </div>
         </div>
         <div class="dash-card">
-            <h3>📅 Haftalık Özet (Saat)</h3>
-            <div class="weekly-grid" id="weekly-summary-grid">
-                </div>
+            <h3>📚 Ders Bazlı Toplam Süre</h3>
+            <div class="weekly-grid" id="weekly-summary-grid"></div>
         </div>
     </div>
 </div>
@@ -256,6 +226,18 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // PWA Service Worker Registration (Tek dosyada tutmak için Blob ile yapıyoruz)
+    if ('serviceWorker' in navigator) {
+        const swCode = `
+            self.addEventListener('install', (e) => { self.skipWaiting(); });
+            self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
+            self.addEventListener('fetch', (e) => { /* PWA onayı için dummy fetch */ });
+        `;
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl).catch(err => console.log("SW Kayıt Hatası:", err));
+    }
 
     const firebaseConfig = {
         apiKey: "AIzaSyCtlXFnB8OTQ-P_QKH2fAexX8UlLTRpXcg",
@@ -271,8 +253,8 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     
-    // Her cihazın bağlanacağı ortak veri yolu
     const SHARED_PATH = "yks_kamp_pro_shared/kamp/";
+    const DEFAULT_START_DATE = "2026-04-21"; // Tekilleştirilmiş başlangıç tarihi varsayılanı
     
     let tasksRef, notesRef, customTextRef, settingsRef, userRootRef;
     const connectedRef = ref(database, '.info/connected');
@@ -286,7 +268,7 @@
         
         let chartInstance = null;
         let currentTarget = 6;
-        let currentStartDate = "2026-04-21";
+        let currentStartDate = DEFAULT_START_DATE;
 
         let cacheTasks = {};
         let cacheNotes = {};
@@ -350,40 +332,44 @@
             return 0; 
         };
 
-        const updateDashboard = (subjNames, dailyTotals, weeklyData) => {
+        // Chart Update Logic (İşlemi ayrı bir metoda çıkardık)
+        const renderDashboardLogic = (subjNames, subjTotalHoursArr) => {
             const ctx = document.getElementById('trendChart').getContext('2d');
-            const labels = dailyTotals.map((_, i) => `${i+1}. Gün`);
-            
-            const datasets = subjNames.map((name, idx) => {
-                const dataPoints = dailyTotals.map(dayInfo => dayInfo.subjHours[idx] || 0);
-                const colors = ['#6c5ce7', '#00cec9', '#fdcb6e', '#e17055', '#00b894'];
-                return {
-                    label: name, data: dataPoints,
-                    borderColor: colors[idx % colors.length],
-                    backgroundColor: colors[idx % colors.length] + '40',
-                    borderWidth: 2, tension: 0.3, fill: false
-                };
-            });
+            const colors = ['#6c5ce7', '#00cec9', '#fdcb6e', '#e17055', '#00b894'];
 
             if(chartInstance) chartInstance.destroy();
             const textColor = getComputedStyle(document.body).getPropertyValue('--text-color').trim();
             Chart.defaults.color = textColor;
+            
             chartInstance = new Chart(ctx, {
-                type: 'line', data: { labels, datasets },
+                type: 'doughnut',
+                data: {
+                    labels: subjNames,
+                    datasets: [{
+                        data: subjTotalHoursArr,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: 'transparent',
+                        hoverOffset: 4
+                    }]
+                },
                 options: { 
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Saat' } } },
-                    plugins: { legend: { position: 'top' } },
-                    animation: { duration: 0 }
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right' } },
+                    animation: { duration: 0 } // Animasyon UI takılmasını engellemek için kapalı
                 }
             });
 
             const weeklyGrid = document.getElementById('weekly-summary-grid');
             weeklyGrid.innerHTML = "";
-            weeklyData.forEach((week, i) => {
-                weeklyGrid.innerHTML += `<div class="week-item"><span class="w-title">${i+1}. Hafta</span><span class="w-val">${week.toFixed(1)} Saat</span></div>`;
+            subjNames.forEach((name, i) => {
+                weeklyGrid.innerHTML += `<div class="week-item"><span class="w-title">${name}</span><span class="w-val">${subjTotalHoursArr[i].toFixed(1)} Saat</span></div>`;
             });
         };
+
+        // Chart render işlemini Performans için Debounce'a alıyoruz
+        const debouncedRenderDashboard = debounce(renderDashboardLogic, 400);
 
         const toDateStr = (d) => {
              const year = d.getFullYear();
@@ -397,19 +383,15 @@
             let completedHours = 0, remainingHours = 0;
             let subjStats = [0, 0, 0, 0, 0];
             let subjTotals = [0, 0, 0, 0, 0];
+            let subjTotalHoursArr = [0, 0, 0, 0, 0];
             
-            const dailyTotals = [];
-            const weeklyData = [];
-            let weekSum = 0;
-            
-            let streakData = [];
+            const dailyHoursMap = {};
 
             rows.forEach((row, rowIndex) => {
                 let rowTotalHours = 0;
                 let dateCell = row.querySelector('.date-cell');
-                let rowDate = dateCell ? new Date(dateCell.dataset.fulldate) : null;
+                let rowDateStr = dateCell ? toDateStr(new Date(dateCell.dataset.fulldate)) : null;
                 const rowTasks = row.querySelectorAll(".task-checkbox");
-                const daySubjHours = [0,0,0,0,0];
                 
                 rowTasks.forEach((box, taskIndex) => {
                     const headerTimeSpan = document.querySelector(`th span[data-edit-id="th-time-${taskIndex + 1}"]`);
@@ -425,19 +407,13 @@
                         rowTotalHours += hrs;
                         completedHours += hrs;
                         subjStats[taskIndex]++;
-                        daySubjHours[taskIndex] = hrs;
+                        subjTotalHoursArr[taskIndex] += hrs;
                     } else {
                         remainingHours += currentHeaderHrs;
                     }
                 });
-                
-                dailyTotals.push({ total: rowTotalHours, subjHours: daySubjHours });
-                weekSum += rowTotalHours;
-                if((rowIndex + 1) % 7 === 0 || rowIndex === rows.length - 1) { weeklyData.push(weekSum); weekSum = 0; }
 
-                if (rowDate) {
-                    streakData.push({ date: toDateStr(rowDate), hours: rowTotalHours });
-                }
+                if (rowDateStr) dailyHoursMap[rowDateStr] = rowTotalHours;
 
                 const hourDisplay = document.getElementById(`hour-${rowIndex + 1}`);
                 if (hourDisplay) {
@@ -448,27 +424,18 @@
                 }
             });
 
-            // Yeni ve Gelişmiş Streak (Seri) Mantığı
             let currentStreak = 0;
-            let expectedDate = new Date(); 
-            let expectedStr = toDateStr(expectedDate);
+            let checkDate = new Date(); 
+            let checkDateStr = toDateStr(checkDate);
 
-            // Bugün çalışıldı mı?
-            let todayData = streakData.find(d => d.date === expectedStr);
-            if (todayData && todayData.hours > 0) {
-                currentStreak++;
-            }
+            if (dailyHoursMap[checkDateStr] > 0) { currentStreak++; } 
 
-            // Geriye doğru (Dün ve öncesi) tarama
-            expectedDate.setDate(expectedDate.getDate() - 1);
-            expectedStr = toDateStr(expectedDate);
-
+            checkDate.setDate(checkDate.getDate() - 1);
             while(true) {
-                let dayData = streakData.find(d => d.date === expectedStr);
-                if (dayData && dayData.hours > 0) {
+                let pastDateStr = toDateStr(checkDate);
+                if (dailyHoursMap[pastDateStr] > 0) {
                     currentStreak++;
-                    expectedDate.setDate(expectedDate.getDate() - 1);
-                    expectedStr = toDateStr(expectedDate);
+                    checkDate.setDate(checkDate.getDate() - 1);
                 } else {
                     break;
                 }
@@ -487,7 +454,8 @@
             }
             statsPanel.innerHTML = statsHtml;
             
-            updateDashboard(subjNames, dailyTotals, weeklyData);
+            // Performans için Chart Renderını Debounce ile çağırıyoruz
+            debouncedRenderDashboard(subjNames, subjTotalHoursArr);
         };
 
         const updateDatesInTable = () => {
@@ -521,8 +489,6 @@
         const addRowToDOM = (rowIndex) => {
             const tr = document.createElement("tr");
             let html = `<td><div class="date-wrapper"><span class="date-cell" style="font-weight: 600;"></span><button class="btn-complete-day" title="Tüm Günü Tamamla/Temizle">✅</button></div></td>`;
-            
-            // Tüm yeni satırlar tamamen boş başlayacak
             const rowData = ["", "", "", "", ""];
 
             for (let i = 1; i < 6; i++) {
@@ -560,7 +526,7 @@
                     if (cacheCustomTexts[id] !== undefined && document.activeElement !== el) {
                         el.innerText = cacheCustomTexts[id];
                     } else if (!cacheCustomTexts[id] && document.activeElement !== el && id.startsWith('task-text')) {
-                         const expectedText = ""; // Boş başlatma
+                         const expectedText = ""; 
                          if(el.innerText !== expectedText) el.innerText = expectedText;
                     }
                 });
@@ -585,17 +551,15 @@
             customTextRef = ref(database, `${SHARED_PATH}customTexts/`);
             settingsRef = ref(database, `${SHARED_PATH}settings/`);
 
-            // Bağlantı durumu
             onValue(connectedRef, (snap) => {
                 const cs = document.getElementById("connection-status");
                 if (snap.val() === true) { cs.innerHTML = "🟢 Bağlı"; cs.className = "connection-status status-online"; } 
                 else { cs.innerHTML = "🔴 Çevrimdışı"; cs.className = "connection-status status-offline"; }
             });
 
-            // Ayarlar ve Tablo Oluşturma
             onValue(settingsRef, (snapshot) => {
                 const settings = snapshot.val() || {};
-                currentStartDate = settings.startDate || "2024-04-17";
+                currentStartDate = settings.startDate || DEFAULT_START_DATE;
                 currentTarget = settings.targetHours || 6;
                 const targetCount = settings.rowCount || 28;
 
@@ -621,7 +585,6 @@
                 updateDatesInTable(); debouncedApplyData();
             });
 
-            // Firebase Dinleyicileri
             onValue(tasksRef, (snapshot) => { cacheTasks = snapshot.val() || {}; debouncedApplyData(); });
             onValue(notesRef, (snapshot) => { cacheNotes = snapshot.val() || {}; debouncedApplyData(); });
             onValue(customTextRef, (snapshot) => { 
@@ -633,7 +596,6 @@
                 debouncedApplyData(); 
             });
 
-            // Ayar Event Listener'ları
             document.getElementById("start-date-picker").addEventListener("change", (e) => { set(ref(database, `${SHARED_PATH}settings/startDate`), e.target.value).catch(console.error); });
             targetInput.addEventListener("change", (e) => { set(ref(database, `${SHARED_PATH}settings/targetHours`), Number(e.target.value)).catch(console.error); });
 
@@ -644,10 +606,8 @@
             });
         } 
 
-        // Doğrudan başlat
         initApp();
 
-        // Task Checkbox Tıklaması (Obje tabanlı kayıt)
         tbody.addEventListener("change", (e) => {
             if (e.target.classList.contains("task-checkbox")) { 
                 const isChecked = e.target.checked;
@@ -659,16 +619,8 @@
                 if (isChecked) {
                     const absoluteIndex = parseInt(taskId.split('-')[1]);
                     const colIndex = absoluteIndex % 5;
-                    
                     const headerTimeSpan = document.querySelector(`th span[data-edit-id="th-time-${colIndex + 1}"]`);
-                    const timeStr = headerTimeSpan ? headerTimeSpan.innerText : "";
-                    const hours = getHoursFromText(timeStr);
-
-                    taskData = {
-                        done: true,
-                        hours: hours,
-                        updatedAt: Date.now()
-                    };
+                    taskData = { done: true, hours: getHoursFromText(headerTimeSpan ? headerTimeSpan.innerText : ""), updatedAt: Date.now() };
                 }
                 
                 updateStats(); 
@@ -676,7 +628,6 @@
             }
         });
 
-        // Toplu Gün Tamamlama (Obje tabanlı kayıt)
         tbody.addEventListener("click", (e) => {
             if (e.target.classList.contains("btn-complete-day")) {
                 const tr = e.target.closest('tr');
@@ -692,14 +643,7 @@
 
                     if (newState) {
                         const headerTimeSpan = document.querySelector(`th span[data-edit-id="th-time-${colIndex + 1}"]`);
-                        const timeStr = headerTimeSpan ? headerTimeSpan.innerText : "";
-                        const hours = getHoursFromText(timeStr);
-
-                        updates[box.id] = {
-                            done: true,
-                            hours: hours,
-                            updatedAt: now
-                        };
+                        updates[box.id] = { done: true, hours: getHoursFromText(headerTimeSpan ? headerTimeSpan.innerText : ""), updatedAt: now };
                     } else {
                         updates[box.id] = null;
                     }
@@ -835,7 +779,7 @@
             settingsMenu.classList.remove('show-dropdown');
             if (!("Notification" in window)) { alert("Tarayıcın bildirimleri desteklemiyor."); return; }
             if (Notification.permission === "granted") { 
-                new Notification("Kamp Takip Pro", { body: "Bildirimler zaten aktif! Her akşam 20:00'da hatırlatıcı gönderilecek." }); 
+                new Notification("Kamp Takip Pro", { body: "Bildirimler zaten aktif! Her akşam 20:00'da kontrol edilecek." }); 
             } else if (Notification.permission !== "denied") {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") new Notification("Harika!", { body: "Artık sekme açık kaldıkça her akşam saat 20:00'da hedefini hatırlatacağım." });
@@ -843,10 +787,16 @@
             }
         });
 
+        // Optimize Edilmiş Bildirim Mantığı (10 Dakikada bir kontrol eder, günde bir kez atar)
         setInterval(() => {
             const now = new Date();
-            if (now.getHours() === 20 && now.getMinutes() === 0) {
-                if (Notification.permission === "granted") {
+            // Saat 20:00 veya sonraysa
+            if (now.getHours() >= 20) {
+                const todayStr = toDateStr(now);
+                const lastNotified = localStorage.getItem('lastNotifiedDate');
+                
+                // Eğer bugün henüz bildirim atmadıysak
+                if (lastNotified !== todayStr && Notification.permission === "granted") {
                     const todayZero = new Date(); todayZero.setHours(0,0,0,0);
                     let todayTotalHours = 0;
                     
@@ -863,9 +813,12 @@
                     } else {
                         new Notification("Kamp Takip Pro Tebrikler!", { body: `Bugünkü ${currentTarget} saatlik hedefine ulaştın. Harika bir iş çıkardın!` });
                     }
+                    
+                    // Bugün bildirim attığımızı kaydediyoruz
+                    localStorage.setItem('lastNotifiedDate', todayStr);
                 }
             }
-        }, 60000); 
+        }, 600000); // 10 Dakika (600,000 ms)
     });
 </script>
 
