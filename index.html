@@ -227,7 +227,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // PWA Service Worker Registration
+    // PWA Service Worker Registration (Tek dosyada tutmak için Blob ile yapıyoruz)
     if ('serviceWorker' in navigator) {
         const swCode = `
             self.addEventListener('install', (e) => { self.skipWaiting(); });
@@ -254,7 +254,7 @@
     const database = getDatabase(app);
     
     const SHARED_PATH = "yks_kamp_pro_shared/kamp/";
-    const DEFAULT_START_DATE = "2026-04-21"; 
+    const DEFAULT_START_DATE = "2026-04-21"; // Tekilleştirilmiş başlangıç tarihi varsayılanı
     
     let tasksRef, notesRef, customTextRef, settingsRef, userRootRef;
     const connectedRef = ref(database, '.info/connected');
@@ -332,6 +332,7 @@
             return 0; 
         };
 
+        // Chart Update Logic
         const renderDashboardLogic = (subjNames, subjTotalHoursArr) => {
             const ctx = document.getElementById('trendChart').getContext('2d');
             const colors = ['#6c5ce7', '#00cec9', '#fdcb6e', '#e17055', '#00b894'];
@@ -388,7 +389,7 @@
             rows.forEach((row, rowIndex) => {
                 let rowTotalHours = 0;
                 let dateCell = row.querySelector('.date-cell');
-                let rowDateStr = dateCell ? toDateStr(new Date(dateCell.dataset.fulldate)) : null;
+                let rowDateStr = dateCell ? dateCell.dataset.fulldate : null; 
                 const rowTasks = row.querySelectorAll(".task-checkbox");
                 
                 rowTasks.forEach((box, taskIndex) => {
@@ -422,35 +423,30 @@
                 }
             });
 
-            // ============ STREAK (KESİNTİSİZ SERİ) HESAPLAMA ============
+            // Yeni Streak Hesaplama Algoritması
             let currentStreak = 0;
-            const streakCheckDate = new Date();
-            streakCheckDate.setHours(0, 0, 0, 0);
+            let todayCheck = new Date();
+            let todayStr = toDateStr(todayCheck);
 
-            const todayKey = toDateStr(streakCheckDate);
-            const todayHours = dailyHoursMap[todayKey] || 0;
+            // Önce dünden geriye doğru sayalım
+            let pastDate = new Date();
+            pastDate.setDate(pastDate.getDate() - 1); 
 
-            if (todayHours >= currentTarget) {
-                currentStreak++;
-            }
-
-            streakCheckDate.setDate(streakCheckDate.getDate() - 1);
-            const maxIterations = Math.max(rows.length, 365);
-            let iter = 0;
-
-            while (iter < maxIterations) {
-                const pastKey = toDateStr(streakCheckDate);
-                const pastHours = dailyHoursMap[pastKey] || 0;
-
-                if (pastHours >= currentTarget) {
+            // Kesintisiz geçmiş günleri say
+            while(true) {
+                let pastDateStr = toDateStr(pastDate);
+                if (dailyHoursMap[pastDateStr] > 0) {
                     currentStreak++;
-                    streakCheckDate.setDate(streakCheckDate.getDate() - 1);
+                    pastDate.setDate(pastDate.getDate() - 1);
                 } else {
                     break; 
                 }
-                iter++;
             }
-            // ============ STREAK HESAPLAMA SONU ============
+
+            // Eğer bugün de çalışma yapıldıysa, seriye +1 ekle
+            if (dailyHoursMap[todayStr] > 0) {
+                currentStreak++;
+            }
 
             const subjNames = [];
             for(let i=1; i<=5; i++) {
@@ -480,7 +476,7 @@
                 
                 const dateText = `${rowDate.getDate()} ${months[rowDate.getMonth()]} ${days[rowDate.getDay()]}`;
                 cell.innerText = dateText;
-                cell.dataset.fulldate = rowDate.toISOString(); 
+                cell.dataset.fulldate = toDateStr(rowDate); // Değiştirilen satır
                 
                 const tr = cell.closest('tr');
                 tr.classList.remove("today-highlight", "past-day");
