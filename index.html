@@ -12,36 +12,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        /* TABLO İÇİ KAYDIRMA VE BÖLMELERİ DONDURMA (FROZEN PANES) */
-        .table-container { 
-            max-height: 75vh; /* Ekranda fazla yer kaplamaması için dikey sınır */
-            overflow-y: auto; 
-            overflow-x: auto; 
-        }
         
-        /* Başlıkları (Üst Satırı) Sabitle */
-        thead th { 
-            position: sticky; 
-            top: 0; 
-            z-index: 20; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        }
-        
-        /* Tarihleri (İlk Sütunu) Sabitle */
-        th:first-child, td:first-child { 
-            position: sticky !important; 
-            left: 0; 
-            z-index: 15; 
-            border-right: 2px solid var(--table-border); 
-        }
-        
-        /* En sol üst köşenin (Tarih Başlığı) hem üstten hem soldan sabit kalması */
-        thead th:first-child { z-index: 25; }
-        
-        /* Tarih sütununun arka plan renklerinin şeffaf olup yazılara girmemesi için */
-        tr:nth-child(even) td:first-child { background-color: var(--row-even) !important; }
-        tr:nth-child(odd) td:first-child { background-color: var(--row-odd) !important; }
-        .today-highlight td:first-child { background-color: var(--highlight) !important; }
 
     <style>
         :root {
@@ -195,6 +166,36 @@
         .dropdown-content .drop-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; white-space: nowrap; padding: 12px 16px; width: 100%; text-align: left; border: none; background: transparent; color: var(--text-color); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .dropdown-content input[type="number"] { width: 45px !important; padding: 4px; border-radius: 6px; border: 1px solid var(--table-border) !important; background: var(--bg-color) !important; color: var(--text-color) !important; text-align: center; font-weight: 600; }
         .dropdown-content .drop-item:hover { background-color: var(--dropdown-hover); }
+        /* TABLO İÇİ KAYDIRMA VE BÖLMELERİ DONDURMA (FROZEN PANES) */
+        .table-container { 
+            max-height: 75vh; 
+            overflow-y: auto; 
+            overflow-x: auto; 
+        }
+        
+        /* Başlıkları (Üst Satırı) Sabitle */
+        thead th { 
+            position: sticky; 
+            top: 0; 
+            z-index: 20; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        
+        /* Tarihleri (İlk Sütunu) Sabitle */
+        th:first-child, td:first-child { 
+            position: sticky !important; 
+            left: 0; 
+            z-index: 15; 
+            border-right: 2px solid var(--table-border); 
+        }
+        
+        /* En sol üst köşenin (Tarih Başlığı) hem üstten hem soldan sabit kalması */
+        thead th:first-child { z-index: 25; }
+        
+        /* Tarih sütununun arka plan renklerinin şeffaf olup yazılara girmemesi için */
+        tr:nth-child(even) td:first-child { background-color: var(--row-even) !important; }
+        tr:nth-child(odd) td:first-child { background-color: var(--row-odd) !important; }
+        .today-highlight td:first-child { background-color: var(--highlight) !important; }
 
     </style>
 </head>
