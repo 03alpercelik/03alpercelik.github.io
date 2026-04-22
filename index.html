@@ -475,8 +475,17 @@
             rows.forEach(row => {
                 const dateCell = row.querySelector('.date-cell');
                 if (!dateCell) return;
-                const dateStr = dateCell.dataset.fulldate;
-                const hours = dailyHoursMap[dateStr] || 0;
+                            const dateStr = dateCell.dataset.fulldate;
+            const parts = dateStr.split('-');
+            const rowDate = new Date(parts[0], parts[1]-1, parts[2]);
+            const bugun = new Date();
+            bugun.setHours(0,0,0,0);
+
+            // Eğer takvimdeki gün bugünden sonraysa (gelecekse) kutuyu çizmeden atla:
+            if (rowDate > bugun) return;
+
+            const hours = dailyHoursMap[dateStr] || 0;
+
                 let level = 0;
                 if (hours > 0 && hours < currentTarget / 2) level = 1;
                 else if (hours >= currentTarget / 2 && hours < currentTarget) level = 2;
@@ -489,27 +498,34 @@
                 box.title = `${dateCell.innerText} \nÇalışma: ${hours.toFixed(1)} Saat\nHedef: ${currentTarget} Saat`;
                 container.appendChild(box);
             });
-            // --- STREAK (SERİ) HESAPLAMA ---
+                        // --- STREAK (SERİ) HESAPLAMA (Geriye Doğru) ---
             let currentStreak = 0;
             const todayZ = new Date(); 
             todayZ.setHours(0,0,0,0);
             
-            rows.forEach(row => {
-                const dateCell = row.querySelector('.date-cell');
-                if (!dateCell) return;
-                const dateStr = dateCell.dataset.fulldate;
-                const hours = dailyHoursMap[dateStr] || 0;
-                
-                const parts = dateStr.split('-');
-                const rowDate = new Date(parts[0], parts[1]-1, parts[2]);
+            const partsStr = currentStartDate.split('-');
+            const startD = new Date(partsStr[0], partsStr[1]-1, partsStr[2]);
+            
+            let checkD = new Date(todayZ);
+            let keepChecking = true;
 
-                if (rowDate < todayZ) { 
-                    if (hours >= currentTarget) currentStreak++;
-                    else currentStreak = 0; 
-                } else if (rowDate.getTime() === todayZ.getTime()) { 
-                    if (hours >= currentTarget) currentStreak++;
+            while(keepChecking && checkD >= startD) {
+                let dStr = toDateStr(checkD);
+                let hrs = dailyHoursMap[dStr] || 0;
+
+                if (checkD.getTime() === todayZ.getTime()) {
+                    // Bugün hedef tuttuysa seriye ekle, tutmadıysa henüz gün bitmediği için seriyi kırma
+                    if (hrs >= currentTarget) currentStreak++;
+                } else {
+                    // Geçmiş günlerde hedef tuttuysa seriyi artır, tutmadıysa seriyi kır ve döngüden çık
+                    if (hrs >= currentTarget) {
+                        currentStreak++;
+                    } else {
+                        keepChecking = false; 
+                    }
                 }
-            });
+                checkD.setDate(checkD.getDate() - 1); // Bir gün geriye git
+            }
 
             const streakEl = document.getElementById('streak-counter');
             if (streakEl) streakEl.innerHTML = `🔥 Seri: ${currentStreak}`;
@@ -947,8 +963,15 @@
                 alert("Bildirimler engellenmiş. Lütfen adres çubuğundaki kilit simgesinden izin ver.");
             }
         });
-});
-</script>
+        }
+    }); // (Bu satır bildirim butonunu kapatıyor)
 
-</body>
-</html>
+    // BONUS: PWA (Service Worker) kodunu eklemek istersen tam yeri burası:
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW kayıt hatası: ', err));
+        });
+    }
+
+}); // <--- İŞTE ACİL OLAN EKSİK KAPANIŞ BURASI! (Ana bloğu kapatıyor)
+</script>
