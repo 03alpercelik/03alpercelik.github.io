@@ -866,14 +866,14 @@
             e.target.value = ''; 
         });
 
-        // BİLDİRİM FONKSİYONLARI (ENGEL AŞICI POP-UP YÖNTEMİ EKLENDİ)
+        // BİLDİRİM VE MOTİVASYON SİSTEMİ
         async function triggerNotification(title, body) {
             try {
                 if (Notification.permission === "granted") {
                     const options = {
                         body: body,
                         icon: "https://cdn-icons-png.flaticon.com/512/2936/2936758.png",
-                        requireInteraction: true
+                        requireInteraction: true // Bildirim ekranda tıklanana kadar kalır
                     };
                     
                     if ('serviceWorker' in navigator) {
@@ -896,8 +896,19 @@
         async function sendTodayNotification() {
             const todayRow = document.querySelector('.today-highlight');
             
+            // Rastgele Motivasyon Sözü Seçici
+            const motivasyonSozleri = [
+                "Bugün, gelecekteki senin sana teşekkür edeceği bir gün olsun! 🚀",
+                "Başarı, her gün tekrarlanan küçük çabaların toplamıdır. 💪",
+                "Zorluklar, sıradan insanları sıra dışı bir kadere hazırlar. 🌟",
+                "Hiçbir zafere çiçekli yollardan gidilmez. Devam et! 🔥",
+                "Hayal edebiliyorsan, yapabilirsin. Bugün bir adım daha at! 🎯",
+                "Pes etmeyen birini yenmek çok zordur. Bugün de pes etmiyoruz! 🛡️"
+            ];
+            const rastgeleSoz = motivasyonSozleri[Math.floor(Math.random() * motivasyonSozleri.length)];
+
             if (!todayRow) {
-                await triggerNotification("YKS Kamp Takip", "Bugün için bir görev bulunamadı. Belki de dinlenme günündür!");
+                await triggerNotification("📌 YKS Kamp Takip", `Bugün için bir görev bulunamadı. Belki de dinlenme günündür!\n\n💡 ${rastgeleSoz}`);
                 return;
             }
 
@@ -923,8 +934,33 @@
             let bodyText = tasksList.join('\n');
             if (tasksList.length === 0) bodyText = "Bugün için özel bir görev girilmemiş.";
 
+            // Listenin sonuna sözü ekle
+            bodyText += `\n\n💡 ${rastgeleSoz}`;
+
             await triggerNotification("Bugün Yapılacaklar Listesi", bodyText);
         }
+
+        // OTOMATİK SABAH 09:00 BİLDİRİMİ (ZAMANLAYICI)
+        function checkDailyNotification() {
+            const now = new Date();
+            // Saat 9 veya daha sonraysa ve bugün henüz otomatik bildirim atılmadıysa
+            if (now.getHours() >= 9) {
+                const todayStr = now.toDateString();
+                const lastAutoNotify = localStorage.getItem("lastAutoNotification");
+                
+                if (lastAutoNotify !== todayStr) {
+                    sendTodayNotification();
+                    localStorage.setItem("lastAutoNotification", todayStr);
+                }
+            }
+        }
+        
+        // Sayfa yüklendikten 3 saniye sonra kontrol et (Eğer sabah 9'dan sonra girildiyse hemen atsın diye)
+        setTimeout(checkDailyNotification, 3000);
+        
+        // Site açık kaldığı sürece her 1 dakikada bir kontrol et (Eğer sekmeyi açık unutursan saat tam 9'da atar)
+        setInterval(checkDailyNotification, 60000);
+
 
         document.getElementById('notify-btn').addEventListener('click', () => {
             if (!("Notification" in window)) {
