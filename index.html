@@ -77,20 +77,16 @@
 
         .content { padding: 25px 20px; display: flex; flex-direction: column; align-items: center; }
         
-        /* TABLO İÇİ KAYDIRMA VE BÖLMELERİ DONDURMA (FROZEN PANES) */
         .table-container { width: 100%; max-width: 1300px; background-color: var(--card-bg); border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); overflow-x: auto; overflow-y: auto; max-height: 75vh; border: 1px solid var(--table-border); margin-bottom: 20px; }
         
         table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; color: var(--text-color); }
         th, td { border-bottom: 1px solid var(--table-border); padding: 12px; text-align: left; color: var(--text-color); vertical-align: middle; transition: background 0.3s; }
         
-        /* Başlıkları Sabitle */
         thead th { background: var(--header-bg); color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; position: sticky; top: 0; z-index: 20; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         
-        /* Tarihleri Sabitle */
         th:first-child, td:first-child { position: sticky !important; left: 0; z-index: 15; border-right: 2px solid var(--table-border); }
-        thead th:first-child { z-index: 25; } /* Sol üst köşe */
+        thead th:first-child { z-index: 25; } 
         
-        /* Satır Renkleri */
         tr:nth-child(even) { background-color: var(--row-even); }
         tr:nth-child(odd) { background-color: var(--row-odd); }
         tr:nth-child(even) td:first-child { background-color: var(--row-even) !important; }
@@ -163,7 +159,6 @@
         [data-theme="dark"] .heatmap-day[data-level="4"] { background-color: #39d353; }
 
         @media (max-width: 768px) {
-            /* MİNUMUM GENİŞLİK ARTIRILDI (KAYDIRMA ÇALIŞSIN DİYE) */
             table { min-width: 950px; font-size: 12px; }
             th, td { padding: 10px 6px; }
             .time-tag { font-size: 9px; padding: 1px 4px; }
@@ -177,7 +172,6 @@
             .btn-complete-day { padding: 8px 12px; font-size: 16px; background: var(--row-even); border: 2px solid var(--table-border); border-radius: 8px; opacity: 0.8; }
         }        
         
-        /* Ayarlar Menüsü İyileştirmesi */
         .dropdown-content { min-width: 220px; padding: 8px 0; border-radius: 12px; }
         .dropdown-content .drop-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; white-space: nowrap; padding: 12px 16px; width: 100%; text-align: left; border: none; background: transparent; color: var(--text-color); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .dropdown-content input[type="number"] { width: 45px !important; padding: 4px; border-radius: 6px; border: 1px solid var(--table-border) !important; background: var(--bg-color) !important; color: var(--text-color) !important; text-align: center; font-weight: 600; }
@@ -203,7 +197,8 @@
                     <div class="drop-item" style="cursor: default;">🎯 Hedef (Saat): <input type="number" id="daily-target" value="6" min="1" max="24" style="width:40px; margin-left:auto; border-radius:4px; border:1px solid var(--table-border); background:var(--bg-color); color:var(--text-color); padding:2px; text-align:center;"></div>
                     <div class="drop-item" style="cursor: default;">📚 Ders Sütunu: <input type="number" id="col-count" value="5" min="1" max="10" style="width:40px; margin-left:auto; border-radius:4px; border:1px solid var(--table-border); background:var(--bg-color); color:var(--text-color); padding:2px; text-align:center;"></div>
                     
-                    <button class="drop-item" id="notify-btn">🔔 Bildirimleri Aç (Test)</button>
+                    <button class="drop-item" id="notify-btn">🔔 Bildirimleri Aç / İzin Ver</button>
+                    <button class="drop-item" id="test-notify-btn">📩 Test Bildirimi Gönder</button>
                     <button class="drop-item" id="export-btn">📥 Yedeği İndir</button>
                     <button class="drop-item" id="import-trigger-btn">📤 Yedek Yükle</button>
                     <button class="drop-item danger-item" id="reset-btn">🗑️ Tabloyu Sıfırla</button>
@@ -382,7 +377,6 @@
             tbody.appendChild(tr);
         };
 
-        // UI İlk Hızlı Çizimi
         renderTableStructure();
         
         // --- YARDIMCI FONKSİYONLAR ---
@@ -415,7 +409,7 @@
 
         const updateDatesInTable = () => {
             const parts = currentStartDate.split('-');
-            const startDateObj = new Date(parts[0], parts[1] - 1, parts[2]); // Zaman dilimi kaymalarına karşı güvenli
+            const startDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
             const dateCells = document.querySelectorAll(".date-cell");
             const todayZero = new Date(); todayZero.setHours(0,0,0,0);
             
@@ -483,8 +477,6 @@
                 }
             });
 
-
-            
             // --- STREAK (SERİ) HESAPLAMA (Geriye Doğru) ---
             let currentStreak = 0;
             const todayZ = new Date(); 
@@ -501,17 +493,15 @@
                 let hrs = dailyHoursMap[dStr] || 0;
 
                 if (checkD.getTime() === todayZ.getTime()) {
-                    // Bugün hedef tuttuysa seriye ekle, tutmadıysa henüz gün bitmediği için seriyi kırma
                     if (hrs >= currentTarget) currentStreak++;
                 } else {
-                    // Geçmiş günlerde hedef tuttuysa seriyi artır, tutmadıysa seriyi kır ve döngüden çık
                     if (hrs >= currentTarget) {
                         currentStreak++;
                     } else {
                         keepChecking = false; 
                     }
                 }
-                checkD.setDate(checkD.getDate() - 1); // Bir gün geriye git
+                checkD.setDate(checkD.getDate() - 1); 
             }
 
             const streakEl = document.getElementById('streak-counter');
@@ -531,7 +521,6 @@
             }
             statsPanel.innerHTML = statsHtml;
             
-            // Grafik Çizimi
             const ctx = document.getElementById('trendChart').getContext('2d');
             const colors = ['#6c5ce7', '#00cec9', '#fdcb6e', '#e17055', '#00b894', '#e84393', '#0984e3', '#d63031'];
             if(chartInstance) chartInstance.destroy();
@@ -586,7 +575,7 @@
         };
         const debouncedApplyData = debounce(applyDataToUI, 150);
         
-        applyDataToUI(); // Yerel veriyle ilk çizimi tamamla
+        applyDataToUI(); 
 
         // --- FIREBASE BAĞLANTISI ---
         const app = initializeApp(firebaseConfig);
@@ -633,7 +622,6 @@
             debouncedApplyData(); 
         });
 
-        // 1. Swipe to Complete (Mobile) - DÜZELTİLDİ
         let touchstartX = 0, touchstartY = 0;
         let isScrolling = false;
 
@@ -643,13 +631,12 @@
             isScrolling = false;
         }, {passive: true});
 
-        // Eğer kullanıcı parmağıyla tabloyu kaydırıyorsa swipe işlemini iptal et
         tbody.addEventListener("touchmove", () => {
             isScrolling = true; 
         }, {passive: true});
 
         tbody.addEventListener("touchend", (e) => {
-            if (isScrolling) return; // Tablo kaydırıldıysa tıklama yapma!
+            if (isScrolling) return; 
             
             const touchendX = e.changedTouches[0].screenX;
             const touchendY = e.changedTouches[0].screenY;
@@ -691,7 +678,6 @@
                     taskData = { done: true, hours: getHoursFromText(headerTimeSpan ? headerTimeSpan.innerText : ""), updatedAt: Date.now() };
                 }
                 
-                // Hem IDB hem Firebase yaz (Offline destek)
                 if(taskData) cacheTasks[taskId] = taskData; else delete cacheTasks[taskId];
                 saveToIDB('tasks', cacheTasks);
                 updateStats(); 
@@ -754,7 +740,6 @@
         }, 800);
         tbody.addEventListener("input", (e) => { if (e.target.classList.contains("note-input")) saveNote(e.target.id, e.target.value); });
 
-        // Ayarlar ve Dinleyiciler
         document.getElementById("start-date-picker").addEventListener("change", (e) => { if(database) set(ref(database, `${SHARED_PATH}settings/startDate`), e.target.value).catch(console.error); });
         document.getElementById("daily-target").addEventListener("change", (e) => { if(database) set(ref(database, `${SHARED_PATH}settings/targetHours`), Number(e.target.value)).catch(console.error); });
         document.getElementById("col-count").addEventListener("change", (e) => { 
@@ -793,7 +778,6 @@
             updateStats(); 
         });
         
-        // Ayarlar Menüsü Aç/Kapat
         document.getElementById('settings-toggle').addEventListener('click', (e) => {
             e.stopPropagation(); document.getElementById('settings-menu').classList.toggle('show-dropdown');
         });
@@ -840,7 +824,7 @@
             downloadAnchorNode.remove();
         });
 
-                // 3. Yedek Yükle (Import) - GÜNCELLENMİŞ VERSİYON
+        // 3. Yedek Yükle (Import)
         document.getElementById('import-trigger-btn').addEventListener('click', () => {
             document.getElementById('import-file').click();
         });
@@ -852,88 +836,125 @@
             reader.onload = async (event) => {
                 try {
                     const data = JSON.parse(event.target.result);
-                    if (confirm("Mevcut verilerin güncellenecek. Onaylıyor musun?")) {
+                    if (confirm("Kamp programı yüklenecek ve tablo tamamen düzeltilecek. Onaylıyor musun?")) {
                         if (database) {
                             
-                            // DURUM 1: Bu dosya uygulamanın kendi indirdiği bir Firebase yedeği ise
                             if (data.tasks !== undefined || data.settings !== undefined || data.customTexts !== undefined) {
                                 if (data.tasks) await set(ref(database, `${SHARED_PATH}tasks`), data.tasks);
                                 if (data.notes) await set(ref(database, `${SHARED_PATH}notes`), data.notes);
                                 if (data.customTexts) await set(ref(database, `${SHARED_PATH}customTexts`), data.customTexts);
                                 if (data.settings) await set(ref(database, `${SHARED_PATH}settings`), data.settings);
                             }
-                            
-                            // DURUM 2: Bu dosya dışarıdan yüklenen Ders Programı JSON'u ise (Array)
                             else if (Array.isArray(data)) {
                                 let newCustomTexts = {}; 
                                 let newNotes = {};
                                 
-                                // Tablo başlıklarını ders isimlerine göre ayarla
                                 newCustomTexts["th-subj-0"] = "Matematik";
-                                newCustomTexts["th-subj-1"] = "Fizik";
-                                newCustomTexts["th-subj-2"] = "Kimya";
-                                newCustomTexts["th-subj-3"] = "Biyoloji";
+                                newCustomTexts["th-time-0"] = "09:00 - 11:00"; 
                                 
-                                // JSON'daki günleri döngüye alıp tablo hücrelerine (task-text-satır-sütun) yerleştir
+                                newCustomTexts["th-subj-1"] = "Fizik";
+                                newCustomTexts["th-time-1"] = "11:30 - 13:00"; 
+                                
+                                newCustomTexts["th-subj-2"] = "Kimya";
+                                newCustomTexts["th-time-2"] = "14:00 - 15:30"; 
+                                
+                                newCustomTexts["th-subj-3"] = "Biyoloji";
+                                newCustomTexts["th-time-3"] = "16:00 - 17:30"; 
+                                
                                 data.forEach((gun, rowIndex) => {
-                                    if (gun.matematik && gun.matematik !== "") newCustomTexts[`task-text-${rowIndex}-0`] = gun.matematik;
-                                    if (gun.fizik && gun.fizik !== "") newCustomTexts[`task-text-${rowIndex}-1`] = gun.fizik;
-                                    if (gun.kimya && gun.kimya !== "") newCustomTexts[`task-text-${rowIndex}-2`] = gun.kimya;
-                                    if (gun.biyoloji && gun.biyoloji !== "") newCustomTexts[`task-text-${rowIndex}-3`] = gun.biyoloji;
+                                    newCustomTexts[`task-text-${rowIndex}-0`] = gun.matematik || "-";
+                                    newCustomTexts[`task-text-${rowIndex}-1`] = gun.fizik || "-";
+                                    newCustomTexts[`task-text-${rowIndex}-2`] = gun.kimya || "-";
+                                    newCustomTexts[`task-text-${rowIndex}-3`] = gun.biyoloji || "-";
                                     
-                                    // Günlük rutinleri de o günün notlar kısmına aktar
                                     if (gun.gunlukRutinler) {
                                         newNotes[`note-${rowIndex + 1}`] = gun.gunlukRutinler;
                                     }
                                 });
                                 
-                                // Uygulamanın ayarlarını yeni programa göre formatla (4 sütun, gün sayısı kadar satır)
-                                await set(ref(database, `${SHARED_PATH}settings/colCount`), 4);
-                                await set(ref(database, `${SHARED_PATH}settings/rowCount`), data.length);
+                                await set(ref(database, `${SHARED_PATH}settings`), {
+                                    colCount: 4,
+                                    rowCount: data.length,
+                                    startDate: "2026-05-04",
+                                    targetHours: 6
+                                });
                                 
-                                // Dönüştürülen verileri Firebase'e yaz
+                                await set(ref(database, `${SHARED_PATH}tasks`), null); 
                                 await set(ref(database, `${SHARED_PATH}customTexts`), newCustomTexts);
                                 await set(ref(database, `${SHARED_PATH}notes`), newNotes);
                             }
 
-                            alert("Dosya başarıyla yüklendi ve uygulandı!");
+                            alert("Yedek başarıyla yüklendi! Sayfa yenileniyor...");
+                            window.location.reload(); 
                         }
                     }
                 } catch (err) {
-                    console.error("Yedek yükleme hatası:", err);
-                    alert("Geçersiz dosya! Lütfen uygun bir .json dosyası seçtiğinden emin ol.");
+                    console.error("Yükleme hatası:", err);
+                    alert("Yükleme başarısız oldu. Lütfen dosyayı kontrol et.");
                 }
             };
             reader.readAsText(file);
             e.target.value = ''; 
         });
 
-                    }
-                } catch (err) {
-                    console.error("Yedek yükleme hatası:", err);
-                    alert("Geçersiz yedek dosyası! Lütfen indirdiğin .json dosyasını seçtiğinden emin ol.");
-                }
-            };
-            reader.readAsText(file);
-            e.target.value = ''; 
-        });
+        // 4. Bildirim İşlemleri (Bugün Yapılacaklar Listesi)
+        function sendTodayNotification() {
+            // Bugünün satırını bul (Sarı renkle işaretli olan satır)
+            const todayRow = document.querySelector('.today-highlight');
+            
+            if (!todayRow) {
+                new Notification("📌 YKS Kamp Takip", { 
+                    body: "Bugün için bir kamp programı bulunamadı. Belki bugün dinlenme günündür!", 
+                    icon: "https://cdn-icons-png.flaticon.com/512/2936/2936758.png" 
+                });
+                return;
+            }
 
-        // 4. Bildirimleri Aç (Notifications)
+            let tasksList = [];
+            const tasks = todayRow.querySelectorAll('.task-text');
+            const headers = document.querySelectorAll('thead th .editable-text[id^="th-subj"]');
+            
+            // Hücrelerdeki ders konularını tara
+            tasks.forEach((taskSpan, index) => {
+                const taskText = taskSpan.innerText.trim();
+                const subjText = headers[index] ? headers[index].innerText.trim() : "";
+                
+                // Boş veya "-" olmayan dersleri listeye ekle
+                if (taskText !== "Ders/Konu Ekle" && taskText !== "-") {
+                    const isDone = taskSpan.previousElementSibling && taskSpan.previousElementSibling.checked;
+                    // Yapıldıysa yeşil tik, yapılmadıysa kum saati emojisi koy
+                    tasksList.push(`${isDone ? '✅' : '⏳'} ${subjText}: ${taskText}`);
+                }
+            });
+
+            // O güne ait not veya rutini ekle
+            const noteInput = todayRow.querySelector('.note-input');
+            if (noteInput && noteInput.value.trim() !== "") {
+                tasksList.push(`📝 Rutin/Not: ${noteInput.value.trim()}`);
+            }
+
+            let bodyText = tasksList.join('\n');
+            if (tasksList.length === 0) bodyText = "Bugün için özel bir görev girilmemiş. Kendine zaman ayır!";
+
+            // Bildirimi fırlat
+            new Notification("📌 Bugün Yapılacaklar", {
+                body: bodyText,
+                icon: "https://cdn-icons-png.flaticon.com/512/2936/2936758.png"
+            });
+        }
+
+        // İzin İsteme Butonu
         document.getElementById('notify-btn').addEventListener('click', () => {
             if (!("Notification" in window)) {
                 alert("Tarayıcın masaüstü/mobil bildirimleri desteklemiyor.");
                 return;
             }
             if (Notification.permission === "granted") {
-                new Notification("YKS Kamp Takip", { body: "Bildirimler aktif! (Sekme açık kaldığı sürece çalışır)" });
-                alert("Bildirimler açık. Sağ alttan veya üstten test bildirimi gelmiş olmalı.");
+                alert("Bildirim izni zaten verilmiş! Test butonunu kullanabilirsin.");
             } else if (Notification.permission !== "denied") {
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
-                        new Notification("YKS Kamp Takip", {
-                            body: "Harika! Bildirim izinleri başarıyla verildi.",
-                            icon: "https://cdn-icons-png.flaticon.com/512/2936/2936758.png"
-                        });
+                        alert("Harika! Bildirim izinleri başarıyla verildi.");
                     } else {
                         alert("Bildirim izni verilmedi.");
                     }
@@ -943,7 +964,19 @@
             }
         });
 
-        // --- YKS GERİ SAYIM SAYACI ---
+        // Test Bildirimi Gönderme Butonu
+        document.getElementById('test-notify-btn').addEventListener('click', () => {
+            if (!("Notification" in window)) {
+                alert("Tarayıcın bildirimleri desteklemiyor.");
+                return;
+            }
+            if (Notification.permission === "granted") {
+                sendTodayNotification();
+            } else {
+                alert("Lütfen önce üstteki 'Bildirimleri Aç / İzin Ver' butonuna tıklayarak tarayıcı izni verin!");
+            }
+        });
+
         function updateYksCountdown() {
             const yksDate = new Date("2026-06-20T10:15:00").getTime(); 
             const now = new Date().getTime();
@@ -960,12 +993,10 @@
         updateYksCountdown();
         setInterval(updateYksCountdown, 1000 * 60 * 60 * 24);
 
-        // --- AYARLAR MENÜSÜ İÇİ TIKLAMA DÜZELTMESİ ---
         document.getElementById('settings-menu').addEventListener('click', (e) => {
             if(e.target.tagName === 'INPUT') e.stopPropagation();
         });
 
-        // BONUS: PWA (Service Worker) Kodu
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').catch(err => console.log('SW kayıt hatası: ', err));
