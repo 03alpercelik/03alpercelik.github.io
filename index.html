@@ -129,7 +129,8 @@
         body.edit-mode .editable-text:focus { outline: none; background: rgba(0, 184, 148, 0.2); border-style: solid; }
         body.edit-mode .task-label { cursor: default; }
 
-        .dashboard { width: 100%; max-width: 1300px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 20px; }
+        /* Isı haritası silindi, dashboard artık yanyana 2 kutu olacak şekilde ayarlandı */
+        .dashboard { width: 100%; max-width: 1300px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
         .dash-card { background: var(--card-bg); padding: 24px; border-radius: 16px; border: 1px solid var(--table-border); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); transition: transform 0.3s ease; }
         .dash-card:hover { transform: translateY(-3px); }
         .dash-card h3 { margin-top: 0; font-size: 15px; margin-bottom: 20px; border-bottom: 2px solid var(--row-even); padding-bottom: 12px; display: flex; align-items: center; gap: 8px; }
@@ -140,23 +141,6 @@
         .week-item .w-title { font-weight: 700; color: var(--secondary-text); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
         .week-item .w-val { font-size: 18px; color: var(--text-color); font-weight: 900; }
         .week-item .w-val span { font-size: 11px; font-weight: 600; color: var(--secondary-text); }
-
-        .heatmap-card { grid-column: 1 / -1; }
-        .heatmap-wrapper { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-        .heatmap-day { width: 16px; height: 16px; border-radius: 4px; background-color: var(--row-even); position: relative; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid rgba(128, 128, 128, 0.2); }
-        .heatmap-day:hover { transform: scale(1.3); z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-
-        .heatmap-day[data-level="0"] { background-color: var(--row-even); }
-        .heatmap-day[data-level="1"] { background-color: #9be9a8; }
-        .heatmap-day[data-level="2"] { background-color: #40c463; }
-        .heatmap-day[data-level="3"] { background-color: #30a14e; }
-        .heatmap-day[data-level="4"] { background-color: #216e39; }
-
-        [data-theme="dark"] .heatmap-day[data-level="0"] { background-color: #334155; }
-        [data-theme="dark"] .heatmap-day[data-level="1"] { background-color: #0e4429; }
-        [data-theme="dark"] .heatmap-day[data-level="2"] { background-color: #006d32; }
-        [data-theme="dark"] .heatmap-day[data-level="3"] { background-color: #26a641; }
-        [data-theme="dark"] .heatmap-day[data-level="4"] { background-color: #39d353; }
 
         @media (max-width: 768px) {
             table { min-width: 950px; font-size: 12px; }
@@ -240,11 +224,6 @@
     </div>
 
     <div class="dashboard">
-        <div class="dash-card heatmap-card">
-            <h3>🟩 Çalışma Isı Haritası (Günlük Performans)</h3>
-            <div class="heatmap-wrapper" id="heatmap-container"></div>
-        </div>
-
         <div class="dash-card">
             <h3>📊 Ders Dağılımı (Saat)</h3>
             <div class="chart-container">
@@ -262,7 +241,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // OFFLINE-FIRST: IndexedDB Setup
     const dbPromise = new Promise((resolve, reject) => {
         const req = indexedDB.open("YksKampProDB", 1);
         req.onupgradeneeded = (e) => {
@@ -327,7 +305,6 @@
         const days = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
         const months = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-        // 1. Önce IndexedDB'den Hızlı Yükleme (Offline First)
         const [idbTasks, idbNotes, idbTexts, idbSettings] = await Promise.all([
             getFromIDB('tasks'), getFromIDB('notes'), getFromIDB('customTexts'), getFromIDB('settings')
         ]);
@@ -379,7 +356,6 @@
 
         renderTableStructure();
         
-        // --- YARDIMCI FONKSİYONLAR ---
         const debounce = (func, delay) => {
             let timeout;
             return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func(...args), delay); };
@@ -477,7 +453,6 @@
                 }
             });
 
-            // --- STREAK (SERİ) HESAPLAMA (Geriye Doğru) ---
             let currentStreak = 0;
             const todayZ = new Date(); 
             todayZ.setHours(0,0,0,0);
@@ -507,7 +482,6 @@
             const streakEl = document.getElementById('streak-counter');
             if (streakEl) streakEl.innerHTML = `🔥 Seri: ${currentStreak}`;
 
-            // Dashboard & İstatistikler
             const subjNames = [];
             for(let i=0; i<currentCols; i++) {
                 const el = document.getElementById(`th-subj-${i}-text`);
@@ -577,7 +551,6 @@
         
         applyDataToUI(); 
 
-        // --- FIREBASE BAĞLANTISI ---
         const app = initializeApp(firebaseConfig);
         database = getDatabase(app);
         userRootRef = ref(database, SHARED_PATH);
@@ -785,7 +758,6 @@
             if (!e.target.matches('#settings-toggle')) document.getElementById('settings-menu').classList.remove('show-dropdown');
         });
 
-        // 1. Tabloyu Sıfırla (Reset)
         document.getElementById('reset-btn').addEventListener('click', async () => {
             if (confirm("Tüm tablo verileri, tamamlanan görevler ve notlar KALICI olarak silinecek. Emin misin?")) {
                 if (database) {
@@ -802,7 +774,6 @@
             }
         });
 
-        // 2. Yedek İndir (Export)
         document.getElementById('export-btn').addEventListener('click', () => {
             const backupData = {
                 tasks: cacheTasks,
@@ -824,7 +795,6 @@
             downloadAnchorNode.remove();
         });
 
-        // 3. Yedek Yükle (Import)
         document.getElementById('import-trigger-btn').addEventListener('click', () => {
             document.getElementById('import-file').click();
         });
@@ -897,16 +867,43 @@
             e.target.value = ''; 
         });
 
-        // 4. Bildirim İşlemleri (Bugün Yapılacaklar Listesi)
-        function sendTodayNotification() {
-            // Bugünün satırını bul (Sarı renkle işaretli olan satır)
+        // 4. GARANTİLİ BİLDİRİM SİSTEMİ (Engellere Karşı Korumalı)
+        async function triggerNotification(title, body) {
+            try {
+                // Eğer bildirim izni verildiyse sistemden göndermeyi dene
+                if (Notification.permission === "granted") {
+                    const options = {
+                        body: body,
+                        icon: "https://cdn-icons-png.flaticon.com/512/2936/2936758.png",
+                        requireInteraction: true // Bildirimin ekranda kalmasını sağlar
+                    };
+                    
+                    // Telefonlar için (PWA Service Worker) öncelikli deneme
+                    if ('serviceWorker' in navigator) {
+                        const reg = await navigator.serviceWorker.getRegistration();
+                        if (reg && reg.showNotification) {
+                            reg.showNotification(title, options);
+                            return;
+                        }
+                    }
+                    
+                    // Klasik Web Bildirimi (PC için)
+                    new Notification(title, options);
+                } else {
+                    // İzin yoksa veya engellendiyse Alert Popup ile göster (Garanti Yöntem)
+                    alert(`🔔 ${title}\n\n${body}`); 
+                }
+            } catch (error) {
+                console.error("Arkaplan bildirimi başarısız oldu, popup kullanılıyor:", error);
+                alert(`🔔 ${title}\n\n${body}`); 
+            }
+        }
+
+        async function sendTodayNotification() {
             const todayRow = document.querySelector('.today-highlight');
             
             if (!todayRow) {
-                new Notification("📌 YKS Kamp Takip", { 
-                    body: "Bugün için bir kamp programı bulunamadı. Belki bugün dinlenme günündür!", 
-                    icon: "https://cdn-icons-png.flaticon.com/512/2936/2936758.png" 
-                });
+                await triggerNotification("YKS Kamp Takip", "Bugün için bir kamp programı bulunamadı. Belki de dinlenme günündür!");
                 return;
             }
 
@@ -914,39 +911,31 @@
             const tasks = todayRow.querySelectorAll('.task-text');
             const headers = document.querySelectorAll('thead th .editable-text[id^="th-subj"]');
             
-            // Hücrelerdeki ders konularını tara
             tasks.forEach((taskSpan, index) => {
                 const taskText = taskSpan.innerText.trim();
                 const subjText = headers[index] ? headers[index].innerText.trim() : "";
                 
-                // Boş veya "-" olmayan dersleri listeye ekle
                 if (taskText !== "Ders/Konu Ekle" && taskText !== "-") {
                     const isDone = taskSpan.previousElementSibling && taskSpan.previousElementSibling.checked;
-                    // Yapıldıysa yeşil tik, yapılmadıysa kum saati emojisi koy
                     tasksList.push(`${isDone ? '✅' : '⏳'} ${subjText}: ${taskText}`);
                 }
             });
 
-            // O güne ait not veya rutini ekle
             const noteInput = todayRow.querySelector('.note-input');
             if (noteInput && noteInput.value.trim() !== "") {
-                tasksList.push(`📝 Rutin/Not: ${noteInput.value.trim()}`);
+                tasksList.push(`\n📝 Not: ${noteInput.value.trim()}`);
             }
 
             let bodyText = tasksList.join('\n');
-            if (tasksList.length === 0) bodyText = "Bugün için özel bir görev girilmemiş. Kendine zaman ayır!";
+            if (tasksList.length === 0) bodyText = "Bugün için özel bir görev girilmemiş.";
 
-            // Bildirimi fırlat
-            new Notification("📌 Bugün Yapılacaklar", {
-                body: bodyText,
-                icon: "https://cdn-icons-png.flaticon.com/512/2936/2936758.png"
-            });
+            await triggerNotification("Bugün Yapılacaklar Listesi", bodyText);
         }
 
         // İzin İsteme Butonu
         document.getElementById('notify-btn').addEventListener('click', () => {
             if (!("Notification" in window)) {
-                alert("Tarayıcın masaüstü/mobil bildirimleri desteklemiyor.");
+                alert("Tarayıcın masaüstü/mobil bildirimleri desteklemiyor. Bildirimler pop-up olarak gösterilecek.");
                 return;
             }
             if (Notification.permission === "granted") {
@@ -956,25 +945,17 @@
                     if (permission === "granted") {
                         alert("Harika! Bildirim izinleri başarıyla verildi.");
                     } else {
-                        alert("Bildirim izni verilmedi.");
+                        alert("Bildirim izni verilmedi. Görevler pop-up mesajı (alert) olarak gösterilecek.");
                     }
                 });
             } else {
-                alert("Bildirimler tarayıcı ayarlarından engellenmiş. Lütfen adres çubuğundaki kilit simgesinden izin ver.");
+                alert("Bildirimler tarayıcı ayarlarından engellenmiş. Lütfen adres çubuğundaki kilit simgesinden izin ver veya ekran mesajlarıyla devam et.");
             }
         });
 
         // Test Bildirimi Gönderme Butonu
         document.getElementById('test-notify-btn').addEventListener('click', () => {
-            if (!("Notification" in window)) {
-                alert("Tarayıcın bildirimleri desteklemiyor.");
-                return;
-            }
-            if (Notification.permission === "granted") {
-                sendTodayNotification();
-            } else {
-                alert("Lütfen önce üstteki 'Bildirimleri Aç / İzin Ver' butonuna tıklayarak tarayıcı izni verin!");
-            }
+            sendTodayNotification();
         });
 
         function updateYksCountdown() {
