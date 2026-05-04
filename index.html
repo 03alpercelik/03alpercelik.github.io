@@ -10,7 +10,7 @@
     <title>YKS Kamp Takip Pro</title>
     <link rel="manifest" href="manifest.json">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -37,6 +37,10 @@
         .controls { max-width: 1300px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .controls-left, .controls-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
+        /* Yeni YKS Logosu */
+        .app-logo { font-size: 24px; font-weight: 900; background: linear-gradient(135deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; margin-right: 15px; display: flex; align-items: center; gap: 5px; }
+        .app-logo span { font-size: 20px; -webkit-text-fill-color: initial; }
+
         .btn { padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
         .btn:active { transform: scale(0.95); }
         .btn-theme { background: #636e72; color: white; }
@@ -44,10 +48,17 @@
         .btn-edit.active { background: var(--accent); animation: pulse 2s infinite; }
         
         .dropdown { position: relative; display: inline-block; }
-        .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: var(--card-bg); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1000; border: 1px solid var(--table-border); overflow: hidden; }
-        .dropdown-content .drop-item { width: 100%; text-align: left; border-radius: 0; border: none; padding: 12px 16px; background: transparent; color: var(--text-color); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 8px; }
-        .dropdown-content .drop-item:hover { background-color: var(--dropdown-hover); }
+        
+        /* Simetrik Ayarlar Menüsü Güncellemesi */
+        .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: var(--card-bg); min-width: 250px; padding: 10px 0; box-shadow: 0px 10px 25px rgba(0,0,0,0.2); border-radius: 12px; z-index: 1000; border: 1px solid var(--table-border); overflow: hidden; }
+        .dropdown-content .drop-item { display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 12px 20px; width: 100%; text-align: left; border: none; background: transparent; color: var(--text-color); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; box-sizing: border-box; }
+        .dropdown-content .drop-item.has-input { justify-content: space-between; padding-right: 15px; }
+        .dropdown-content .drop-item .icon { font-size: 16px; width: 22px; text-align: center; }
+        .dropdown-content .drop-item:hover:not(.has-input) { background-color: var(--dropdown-hover); }
         .dropdown-content .danger-item { color: var(--danger-color); }
+        .dropdown-content .menu-input { width: 45px; padding: 4px; border-radius: 6px; border: 1px solid var(--table-border); background: var(--bg-color); color: var(--text-color); text-align: center; font-weight: 700; font-family: inherit; outline: none; transition: border 0.2s; }
+        .dropdown-content .menu-input:focus { border-color: var(--accent); }
+        .menu-divider { height: 1px; background-color: var(--table-border); margin: 6px 0; opacity: 0.6; }
         .show-dropdown { display: block; }
         
         .row-controls { display: flex; gap: 10px; width: 100%; max-width: 1300px; margin-top: 15px; }
@@ -109,7 +120,6 @@
         
         .note-input { width: 100%; min-width: 160px; padding: 8px; border: 1px solid var(--table-border); border-radius: 6px; background: var(--card-bg); color: var(--text-color); font-size: 12px; font-family: inherit; resize: vertical; min-height: 40px; box-sizing: border-box; transition: border-color 0.2s; }
         .note-input:focus { outline: none; border-color: var(--accent); }
-        .search-input { min-width: auto; height: 35px; width: 200px; border-radius: 20px; padding: 0 15px; }
 
         .today-highlight, .today-highlight td { background-color: var(--highlight) !important; color: #000000 !important; font-weight: 700 !important; }
         .today-highlight td:first-child { background-color: var(--highlight) !important; }
@@ -151,15 +161,9 @@
             .setting-container { width: 100%; justify-content: center; }
             .stats-container { justify-content: center; }
             .dashboard { grid-template-columns: 1fr; }
-            .search-input { width: 100%; margin-top: 5px; }
             .btn-complete-day { padding: 8px 12px; font-size: 16px; background: var(--row-even); border: 2px solid var(--table-border); border-radius: 8px; opacity: 0.8; }
+            .app-logo { margin-bottom: 5px; }
         }        
-        
-        .dropdown-content { min-width: 220px; padding: 8px 0; border-radius: 12px; }
-        .dropdown-content .drop-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; white-space: nowrap; padding: 12px 16px; width: 100%; text-align: left; border: none; background: transparent; color: var(--text-color); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .dropdown-content input[type="number"] { width: 45px !important; padding: 4px; border-radius: 6px; border: 1px solid var(--table-border) !important; background: var(--bg-color) !important; color: var(--text-color) !important; text-align: center; font-weight: 600; }
-        .dropdown-content .drop-item:hover { background-color: var(--dropdown-hover); }
-
     </style>
 </head>
 <body>
@@ -167,30 +171,59 @@
 <div class="sticky-header">
     <div class="controls">
         <div class="controls-left">
+            <div class="app-logo"><span>🎓</span> YKS</div>
             <button class="btn btn-theme" id="theme-toggle" title="Karanlık/Aydınlık Mod">🌙 Mod</button>
             <button class="btn btn-edit" id="edit-btn">✏️ Düzenle</button>
             <div class="setting-container" title="Kamp Başlangıç Tarihi">🗓️ <input type="date" id="start-date-picker"></div>
-            <input type="text" id="note-search" class="note-input search-input" placeholder="🔍 Notlarda ara...">
         </div>
         <div class="controls-right">
             <span id="connection-status" class="connection-status status-offline">⚪ Yükleniyor...</span>
             <div class="dropdown">
                 <button class="btn btn-theme" id="settings-toggle">⚙️ Ayarlar</button>
                 <div class="dropdown-content" id="settings-menu">
-                    <div class="drop-item" style="cursor: default;">🎯 Hedef (Saat): <input type="number" id="daily-target" value="6" min="1" max="24" style="width:40px; margin-left:auto; border-radius:4px; border:1px solid var(--table-border); background:var(--bg-color); color:var(--text-color); padding:2px; text-align:center;"></div>
-                    <div class="drop-item" style="cursor: default;">📚 Ders Sütunu: <input type="number" id="col-count" value="5" min="1" max="10" style="width:40px; margin-left:auto; border-radius:4px; border:1px solid var(--table-border); background:var(--bg-color); color:var(--text-color); padding:2px; text-align:center;"></div>
+                    <div class="drop-item has-input" style="cursor: default;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span class="icon">🎯</span> <span>Hedef (Saat):</span>
+                        </div>
+                        <input type="number" id="daily-target" value="8" min="1" max="24" class="menu-input">
+                    </div>
+                    <div class="drop-item has-input" style="cursor: default;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span class="icon">📚</span> <span>Ders Sütunu:</span>
+                        </div>
+                        <input type="number" id="col-count" value="5" min="1" max="10" class="menu-input">
+                    </div>
                     
-                    <button class="drop-item" id="notify-btn">🔔 Bildirimleri Aç / İzin Ver</button>
-                    <button class="drop-item" id="test-notify-btn">📩 Test Bildirimi Gönder</button>
-                    <button class="drop-item" id="export-btn">📥 Yedeği İndir</button>
-                    <button class="drop-item" id="import-trigger-btn">📤 Yedek Yükle</button>
-                    <button class="drop-item danger-item" id="reset-btn">🗑️ Tabloyu Sıfırla</button>
+                    <div class="menu-divider"></div>
+                    
+                    <button class="drop-item" id="notify-btn">
+                        <span class="icon">🔔</span> <span>Bildirim İzni Ver</span>
+                    </button>
+                    <button class="drop-item" id="test-notify-btn">
+                        <span class="icon">📩</span> <span>Test Bildirimi Gönder</span>
+                    </button>
+                    
+                    <div class="menu-divider"></div>
+                    
+                    <button class="drop-item" id="export-btn">
+                        <span class="icon">📥</span> <span>Yedeği İndir</span>
+                    </button>
+                    <button class="drop-item" id="import-trigger-btn">
+                        <span class="icon">📤</span> <span>Yedek Yükle</span>
+                    </button>
+                    
+                    <div class="menu-divider"></div>
+                    
+                    <button class="drop-item danger-item" id="reset-btn">
+                        <span class="icon">🗑️</span> <span>Tabloyu Sıfırla</span>
+                    </button>
                 </div>
             </div>
             <input type="file" id="import-file" style="display:none" accept=".json">
         </div>
     </div>
 </div>
+
 <div class="progress-wrapper">
     <div class="progress-header">
         <span id="current-date-info">YKS Kamp Takvimi</span>
@@ -290,8 +323,8 @@
         const statsPanel = document.getElementById("stats-panel");
         
         let chartInstance = null;
-        let currentTarget = 6;
-        let currentCols = 5; // Standart olarak 5 sütunla başlıyor
+        let currentTarget = 8;
+        let currentCols = 5; 
         let currentRowCount = 17;
         let currentStartDate = DEFAULT_START_DATE;
 
@@ -311,7 +344,7 @@
         if (idbTexts) cacheCustomTexts = idbTexts;
         if (idbSettings) {
             currentStartDate = idbSettings.startDate || DEFAULT_START_DATE;
-            currentTarget = idbSettings.targetHours || 6;
+            currentTarget = idbSettings.targetHours || 8;
             currentCols = idbSettings.colCount || 5;
             currentRowCount = idbSettings.rowCount || 17;
         }
@@ -320,7 +353,7 @@
             let thHtml = `<th>Tarih</th>`;
             for(let i=0; i<currentCols; i++) {
                 const subjDef = `Ders ${i+1}`;
-                const timeDef = i === 0 ? "09:00 - 10:30" : "00:00 - 00:00";
+                const timeDef = i === 0 ? "09:30 - 11:30" : "00:00 - 00:00";
                 thHtml += `<th><span class="editable-text" data-edit-id="th-subj-${i}" id="th-subj-${i}-text">${subjDef}</span> <span class="time-tag editable-text" data-edit-id="th-time-${i}">${timeDef}</span></th>`;
             }
             thHtml += `<th>Günün Notu</th><th>Toplam Saat</th>`;
@@ -569,7 +602,7 @@
             const newCols = s.colCount || 5;
             const newRows = s.rowCount || 17;
             currentStartDate = s.startDate || DEFAULT_START_DATE;
-            currentTarget = s.targetHours || 6;
+            currentTarget = s.targetHours || 8;
 
             let needsRebuild = false;
             if(newCols !== currentCols) { currentCols = newCols; needsRebuild = true; }
@@ -793,7 +826,6 @@
             downloadAnchorNode.remove();
         });
 
-        // KUSURSUZ JSON İÇE AKTARMA (5 SÜTUNLU UYUMLU)
         document.getElementById('import-trigger-btn').addEventListener('click', () => {
             document.getElementById('import-file').click();
         });
@@ -805,7 +837,7 @@
             reader.onload = async (event) => {
                 try {
                     const data = JSON.parse(event.target.result);
-                    if (confirm("Kamp programı yüklenecek ve tablo tamamen 5 sütuna uyarlanacak. Onaylıyor musun?")) {
+                    if (confirm("Kamp programı yüklenecek ve tablo görseldeki saatlere göre tamamen uyarlanacak. Onaylıyor musun?")) {
                         if (database) {
                             
                             if (data.tasks !== undefined || data.settings !== undefined || data.customTexts !== undefined) {
@@ -819,33 +851,33 @@
                                 let newNotes = {};
                                 
                                 newCustomTexts["th-subj-0"] = "Rutinler";
-                                newCustomTexts["th-time-0"] = "09:00 - 10:30"; 
+                                newCustomTexts["th-time-0"] = "09:30 - 11:30"; 
                                 
-                                newCustomTexts["th-subj-1"] = "Matematik";
-                                newCustomTexts["th-time-1"] = "11:00 - 13:00"; 
+                                newCustomTexts["th-subj-1"] = "Matematik 1";
+                                newCustomTexts["th-time-1"] = "12:30 - 14:00"; 
                                 
-                                newCustomTexts["th-subj-2"] = "Fizik";
-                                newCustomTexts["th-time-2"] = "14:00 - 15:30"; 
+                                newCustomTexts["th-subj-2"] = "Matematik 2";
+                                newCustomTexts["th-time-2"] = "14:15 - 15:30"; 
                                 
-                                newCustomTexts["th-subj-3"] = "Kimya";
-                                newCustomTexts["th-time-3"] = "16:00 - 17:30"; 
+                                newCustomTexts["th-subj-3"] = "Fen Bilimleri";
+                                newCustomTexts["th-time-3"] = "16:30 - 18:30"; 
                                 
-                                newCustomTexts["th-subj-4"] = "Biyoloji";
-                                newCustomTexts["th-time-4"] = "18:00 - 19:30"; 
+                                newCustomTexts["th-subj-4"] = "Tekrar & Soru";
+                                newCustomTexts["th-time-4"] = "19:30 - 21:00"; 
                                 
                                 data.forEach((gun, rowIndex) => {
                                     newCustomTexts[`task-text-${rowIndex}-0`] = gun.rutin || "-";
-                                    newCustomTexts[`task-text-${rowIndex}-1`] = gun.matematik || "-";
-                                    newCustomTexts[`task-text-${rowIndex}-2`] = gun.fizik || "-";
-                                    newCustomTexts[`task-text-${rowIndex}-3`] = gun.kimya || "-";
-                                    newCustomTexts[`task-text-${rowIndex}-4`] = gun.biyoloji || "-";
+                                    newCustomTexts[`task-text-${rowIndex}-1`] = gun.mat1 || "-";
+                                    newCustomTexts[`task-text-${rowIndex}-2`] = gun.mat2 || "-";
+                                    newCustomTexts[`task-text-${rowIndex}-3`] = gun.fen || "-";
+                                    newCustomTexts[`task-text-${rowIndex}-4`] = gun.tekrar || "-";
                                 });
                                 
                                 await set(ref(database, `${SHARED_PATH}settings`), {
                                     colCount: 5,
                                     rowCount: data.length,
                                     startDate: "2026-05-04",
-                                    targetHours: 6
+                                    targetHours: 8
                                 });
                                 
                                 await set(ref(database, `${SHARED_PATH}tasks`), null); 
@@ -853,7 +885,7 @@
                                 await set(ref(database, `${SHARED_PATH}notes`), newNotes);
                             }
 
-                            alert("Yedek başarıyla yüklendi! Yeni 5 sütunlu yapı uygulanıyor...");
+                            alert("Sistem başarıyla yeni programına güncellendi! Sayfa yenileniyor...");
                             window.location.reload(); 
                         }
                     }
@@ -866,14 +898,13 @@
             e.target.value = ''; 
         });
 
-        // BİLDİRİM VE MOTİVASYON SİSTEMİ
         async function triggerNotification(title, body) {
             try {
                 if (Notification.permission === "granted") {
                     const options = {
                         body: body,
                         icon: "https://cdn-icons-png.flaticon.com/512/2936/2936758.png",
-                        requireInteraction: true // Bildirim ekranda tıklanana kadar kalır
+                        requireInteraction: true 
                     };
                     
                     if ('serviceWorker' in navigator) {
@@ -896,7 +927,6 @@
         async function sendTodayNotification() {
             const todayRow = document.querySelector('.today-highlight');
             
-            // Rastgele Motivasyon Sözü Seçici
             const motivasyonSozleri = [
                 "Bugün, gelecekteki senin sana teşekkür edeceği bir gün olsun! 🚀",
                 "Başarı, her gün tekrarlanan küçük çabaların toplamıdır. 💪",
@@ -934,16 +964,13 @@
             let bodyText = tasksList.join('\n');
             if (tasksList.length === 0) bodyText = "Bugün için özel bir görev girilmemiş.";
 
-            // Listenin sonuna sözü ekle
             bodyText += `\n\n💡 ${rastgeleSoz}`;
 
             await triggerNotification("Bugün Yapılacaklar Listesi", bodyText);
         }
 
-        // OTOMATİK SABAH 09:00 BİLDİRİMİ (ZAMANLAYICI)
         function checkDailyNotification() {
             const now = new Date();
-            // Saat 9 veya daha sonraysa ve bugün henüz otomatik bildirim atılmadıysa
             if (now.getHours() >= 9) {
                 const todayStr = now.toDateString();
                 const lastAutoNotify = localStorage.getItem("lastAutoNotification");
@@ -955,12 +982,8 @@
             }
         }
         
-        // Sayfa yüklendikten 3 saniye sonra kontrol et (Eğer sabah 9'dan sonra girildiyse hemen atsın diye)
         setTimeout(checkDailyNotification, 3000);
-        
-        // Site açık kaldığı sürece her 1 dakikada bir kontrol et (Eğer sekmeyi açık unutursan saat tam 9'da atar)
         setInterval(checkDailyNotification, 60000);
-
 
         document.getElementById('notify-btn').addEventListener('click', () => {
             if (!("Notification" in window)) {
